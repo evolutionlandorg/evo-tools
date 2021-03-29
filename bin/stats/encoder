@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+set -e
+
+. $(PWD)/bin/init
+
+encoder="$CONTRACT_INTERSTELLAR_ENCODER" 
+
+for i in $(seq 1 3);do
+  ownership=$(seth call $encoder "ownershipId2Address(uint8)(address)" $i)
+  id=$(seth call $encoder "ownershipAddress2Id(address)(uint8)" $ownership)
+  echo "$ownership: $id"
+done
