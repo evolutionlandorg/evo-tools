@@ -4,18 +4,39 @@ set -e
 
 . $(PWD)/bin/init
 
+export REGISTRY_FILE=${DEPLOY_CONFIG?}/bin/conf/${DEPLOY_CHAIN?}-registry.json
+export OWNER_FILE=${DEPLOY_CONFIG?}/bin/conf/${DEPLOY_CHAIN?}-owner.json
+
+if [ ! -f "$REGISTRY_FILE" ]; then
+cat > "$REGISTRY_FILE" << EOF
+{}
+EOF
+fi
+
+if [ ! -f "$OWNER_FILE" ]; then
+cat > "$OWNER_FILE" << EOF
+{}
+EOF
+fi
+
+
 addressOf() {
     local id=$(seth --to-bytes32 $(seth --from-ascii "${1?}"))
     address=$(seth call @SETTINGSREGISTRY "addressOf(bytes32)(address)" "$id")
-    addAddress "$1" "$address"
-    # echo "$1: $address"
+    echo "$address"
+    addAddress "$REGISTRY_FILE" "$1" "$address"
+}
+
+ownerOf() {
+    local id=$(seth --to-bytes32 $(seth --from-ascii "${2?}"))
+    owner=$(seth call ${1?} "owner()(address)")
+    addAddress "$OWNER_FILE" "$2" "$owner"
 }
 
 uintOf() {
     local id=$(seth --to-bytes32 $(seth --from-ascii "${1?}"))
     uint=$(seth call @SETTINGSREGISTRY "uintOf(bytes32)(uint256)" "$id") 
-    addAddress "$1" "$uint"
-    # echo "$1: $address"
+    addAddress "$REGISTRY_FILE" "$1" "$uint"
 }
 
 addrs=(
@@ -53,10 +74,10 @@ addrs=(
     "CONTRACT_POINTS_REWARD_POOL"
     "CONTRACT_DRILL_BASE"
     # "CONTRACT_DARWINIA_ITO_BASE"
-    "CONTRACT_ERC721_GEGO"
     "CONTRACT_ITEM_BASE"
     "CONTRACT_FORMULA"
     "CONTRACT_METADATA_TELLER"
+    "CONTRACT_ERC721_GEGO"
     # "CONTRACT_LP_ELEMENT_TOKEN"
     "CONTRACT_LP_GOLD_ERC20_TOKEN"
     "CONTRACT_LP_WOOD_ERC20_TOKEN"
@@ -66,8 +87,23 @@ addrs=(
     )
 
 for id in "${addrs[@]}"; do
-    addressOf "$id"
+    addr=$(addressOf "$id")
+    if [  "$id" == "CONTRACT_BRIDGE_POOL" ] || [ "$id" == "CONTRACT_CONTRIBUTION_POOL" ] || [ "$id" == "CONTRACT_DEV_POOL" ]; then
+      addAddress "$OWNER_FILE" "$id" "$addr"
+      continue
+    fi
+    if [  "$id" == "CONTRACT_GENE_SCIENCE" ] || [ "$id" == "CONTRACT_ERC721_GEGO" ] || [ "$id" == "CONTRACT_LP_GOLD_ERC20_TOKEN" ] || [ "$id" == "CONTRACT_LP_WOOD_ERC20_TOKEN" ] || [ "$id" == "CONTRACT_LP_WATER_ERC20_TOKEN" ] || [ "$id" == "CONTRACT_LP_FIRE_ERC20_TOKEN" ] || [ "$id" == "CONTRACT_LP_SOIL_ERC20_TOKEN" ]; then
+      continue
+    fi
+    ownerOf "$addr" "$id"
 done
+
+ownerOf "@SETTINGSREGISTRY" "CONTRACT_SETTINGSREGISTRY"
+ownerOf "@GOVERNANCE_APP" "CONTRACT_GOVERNANCE_APP"
+ownerOf "@FURNACE_APP" "CONTRACT_FURNACE_APP"
+addAddress "$REGISTRY_FILE" "CONTRACT_FURNACE_APP" "$FURNACE_APP"
+addAddress "$REGISTRY_FILE" "CONTRACT_GOVERNANCE_APP" "$GOVERNANCE_APP"
+addAddress "$REGISTRY_FILE" "CONTRACT_SNAPSHOT_PROXY" "$SNAPSHOT_PROXY"
 
 uints=(
     "UINT_AUCTION_CUT" 
