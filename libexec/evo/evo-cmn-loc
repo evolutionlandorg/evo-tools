@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+### evo-cmn-loc -- Common Location management
+### Usage: evo cmn-loc [<command>]
+###
+### Commands: has   <token-id>         Hasloc
+###           getHM <token-id>         GetTokenlocHM
+###           setHM <token-id> <x> <y> SetTokenlocHM
+###           get   <token-id>         GetTokenloc
+###           set   <token-id> <x> <y> SetTokenloc
+###
+### Example:  evo cmn-loc balance @me
+###           evo cmn-loc owner @land
+
+set -e
+
+loc="$(evo --addr-of "CONTRACT_TOKEN_LOCATION")" 
+
+p() { printf "%-s %-52s \n" "$1" "$2"; }
+
+case $1 in
+  has)
+    sig="hasLocation(uint256)(bool)"
+    seth call "$loc" "$sig" "${2?}"
+  ;;
+  getHM)
+    sig="getTokenLocationHM(uint256)(int,int)"
+    loc=$(seth call "$loc" "$sig" "${2?}")
+    x=$(echo $loc | cut -d' ' -f 1)
+    y=$(echo $loc | cut -d' ' -f 2)
+    p "x" "$x"
+    p "y" "$x"
+  ;;
+  setHM)
+    sig="setTokenLocationHMHM(uint256,int,int)"
+    seth send "$loc" "$sig" "${@:2}"
+  ;;
+  get)
+    sig="getTokenLocation(uint256)(int,int)"
+    loc=$(seth call "$loc" "$sig" "${2?}")
+    x=$(echo $loc | cut -d' ' -f 1)
+    y=$(echo $loc | cut -d' ' -f 2)
+    p "x" "$x"
+    p "y" "$x"
+  ;;
+  set)
+    sig="setTokenLocation(uint256,int,int)"
+    seth send "$loc" "$sig" "${@:2}"
+  ;;
+  *) evo help cmn-loc
+esac

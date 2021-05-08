@@ -2,36 +2,36 @@
 ### evo-cmn -- Common management
 ### Usage: evo cmn [<command>]
 ###
-### Commands: cmn setting   SettingsRegistry
-###           cmn encoder   InterstellarEncoderV4
-###           cmn ownership ObjectOwnership
-###           cmn location  TokenLocation
-###           cmn tokenuse  TokenUse
-###           cmn points    UserPoints
+### Commands: cmn reg regsRegistry
+###           cmn enc InterstellarencV4
+###           cmn tkn ObjectOwnership
+###           cmn loc TokenLocation
+###           cmn use TokenUse
+###           cmn pts UserPoints
 ###
-### Example:  evo cmn setting uintOf UINT_AUCTION_CUT
-###           evo cmn encoder getObjectClass @land
+### Example:  evo cmn reg uintOf UINT_AUCTION_CUT
+###           evo cmn enc getObjectClass @land
 
 set -e
 
 case $1 in
-  setting)
-    evo cmn-setting "${@:2}"
+  reg)
+    evo cmn-reg "${@:2}"
   ;;
-  encoder)
-    evo cmn-encoder "${@:2}"
+  enc)
+    evo cmn-enc "${@:2}"
   ;;
-  ownership)
-    evo cmn-ownership "${@:2}"
+  tkn)
+    evo cmn-tkn "${@:2}"
   ;;
-  location)
-    evo cmn-location "${@:2}"
+  loc)
+    evo cmn-loc "${@:2}"
   ;;
-  tokenuse)
-    evo cmn-tokenuse "${@:2}"
+  use)
+    evo cmn-use "${@:2}"
   ;;
-  points)
-    evo cmn-points "${@:2}"
+  pts)
+    evo cmn-pts "${@:2}"
   ;;
   *) evo help cmn
 esac

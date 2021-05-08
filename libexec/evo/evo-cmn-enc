@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-### evo-cmn-encoder -- Common Encoder management
-### Usage: evo cmn-encoder [<command>]
+### evo-cmn-enc -- Common Encoder management
+### Usage: evo cmn-enc [<command>]
 ###
 ### Commands: chainId             Get Chain Id
 ###           landId              Get Land Id
@@ -15,61 +15,61 @@
 ###           objAddr <token-id>  Get Object Address
 ###           orgAddr <token-id>  Get Origin Address
 ###
-### Example:  evo cmn-encoder chainId 
-###           evo cmn-encoder landId 
+### Example:  evo cmn-enc chainId 
+###           evo cmn-enc landId 
 
 set -e
 
-encoder="$(evo --addr-of "CONTRACT_INTERSTELLAR_ENCODER")" 
+enc="$(evo --addr-of "CONTRACT_INTERSTELLAR_ENCODER")" 
 
 case $1 in
   chainId)
     sig="CHAIN_ID()(uint256)"
-    seth call "$encoder" "$sig" 
+    seth call "$enc" "$sig" 
   ;;
   landId)
     sig="CURRENT_LAND()(uint256)"
-    seth call "$encoder" "$sig"   
+    seth call "$enc" "$sig"   
   ;;
   o2a)
     sig="ownershipId2Address(uint8)(address)"
-    seth call "$encoder" "$sig" "${2?}" 
+    seth call "$enc" "$sig" "${2?}" 
   ;;
   a2o)
     sig="ownershipAddress2Id(address)(uint8)"
-    seth call "$encoder" "$sig" "${2?}"
+    seth call "$enc" "$sig" "${2?}"
   ;;
   a2i)
     sig="classAddress2Id(address)(uint8)"
-    seth call "$encoder" "$sig" "${2?}"
+    seth call "$enc" "$sig" "${2?}"
   ;;
   i2a)
     sig="classId2Address(uint8)(address)"
-    seth call "$encoder" "$sig" "${2?}"
+    seth call "$enc" "$sig" "${2?}"
   ;;
   prdId)
     sig="getProducerId(uint256)(uin16)"
-    seth call "$encoder" "$sig" "${2?}"
+    seth call "$enc" "$sig" "${2?}"
   ;;
   cttAddr)
     sig="getContractAddress(uint256)(address)"
-    seth call "$encoder" "$sig" "${2?}"
+    seth call "$enc" "$sig" "${2?}"
   ;;
   objId)
     sig="getObjectId(uint256)(uint128)"
-    seth call "$encoder" "$sig" "${2?}"
+    seth call "$enc" "$sig" "${2?}"
   ;;
   objCls)
     sig="getObjectClass(uint256)(uint8)"
-    seth call "$encoder" "$sig" "${2?}"
+    seth call "$enc" "$sig" "${2?}"
   ;;
   objAddr)
     sig="getObjectAddress(uint256)(address)"
-    seth call "$encoder" "$sig" "${2?}"
+    seth call "$enc" "$sig" "${2?}"
   ;;
   orgAddr)
     sig="getOriginAddress(uint256)(address)"
-    seth call "$encoder" "$sig" "${2?}"
+    seth call "$enc" "$sig" "${2?}"
   ;;
-  *) evo help cmn-encoder
+  *) evo help cmn-enc
 esac

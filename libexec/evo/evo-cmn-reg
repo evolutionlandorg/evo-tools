@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+### evo-cmn-reg -- Common Registry management
+### Usage: evo cmn-reg [<command>]
+###
+### Commands: ls                        List all regs
+###           uintOf     <id>           Get uint property of id
+###           addressOf  <id>           Get address property of id
+###           setUint    <id> <uint>    Set uint property of id
+###           setAddress <id> <address> Set address property of id
+###
+### Example:  evo cmn-reg uintOf UINT_AUCTION_CUT
+###           evo cmn-reg setUint UINT_AUCTION_CUT 400
+
+set -e
+
+reg="${regSREGISTRY?}" 
+
+case $1 in
+  ls)
+    evo cmn-reg-all
+  ;;
+  uintOf)
+    sig="uintOf(bytes32)(uint256)"
+    id=$(evo --to-id "${2?}")
+    seth call "$reg" "$sig" "$id"   
+  ;;
+  addressOf)
+    sig="addressOf(bytes32)(address)"
+    id=$(evo --to-id "${2?}")
+    seth call "$reg" "$sig" "$id"   
+  ;;
+  setUint)
+    sig="setUintProperty(bytes32,uint)"
+    id=$(evo --to-id "${2?}")
+    seth send "$reg" "$sig" "$id" "${3?}"
+  ;;
+  setAddress)
+    sig="setAddressProperty(bytes32,address)"
+    id=$(evo --to-id "${2?}")
+    seth send "$reg" "$sig" "$id" "${3?}"
+  ;;
+  *) evo help cmn-reg
+esac

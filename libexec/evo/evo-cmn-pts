@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+### evo-cmn-pts -- Common Points management
+### Usage: evo cmn-pts [<command>]
+###
+### Commands: balance <user>         PointsBalanceOf
+###           supply                 PointsSupply
+###
+### Example:  evo cmn-pts balance @me
+###           evo cmn-pts supply
+
+set -e
+
+pts="$(evo --addr-of "CONTRACT_USER_POINTS")" 
+
+case $1 in
+  balance)
+    sig="points(address)(uint256)"
+    seth --to-fix 18 $(seth call "$pts" "$sig" "${2?}")
+  ;;
+  supply)
+    sig="pointsSupply()(uint256)"
+    seth --to-fix 18 $(seth call "$pts" "$sig" "${2?}")
+  ;;
+  *) evo help cmn-pts
+esac

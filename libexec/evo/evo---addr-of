@@ -1,3 +1,5 @@
 #!/usr/bin/env bash
+### evo---addr-of -- Get address of id
+### Usage: seth --addr-of <id>...
 set -e
-evo cmn-setting addressOf "${1?}"
+evo cmn-reg addressOf "${1?}"
