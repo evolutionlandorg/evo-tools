@@ -1,0 +1,91 @@
+#!/usr/bin/env bash
+### evo-cmn-tokenuse -- Common Ownership management
+### Usage: evo cmn-tokenuse [<command>]
+###
+### Commands: i2s    <token-id>                               TokenId2UseStatus
+###           i2o    <token-id>                               TokenId2UseOffer
+###           i2a    <token-id>                               tokenId2CurrentActivity
+###           hired  <token-id>                               IsObjectInHireStage
+###           ready  <token-id>                               IsObjectReadyToUse
+###           user   <token-id>                               GetTokenUser
+###           create <token-id> <duration> <price> <activity> CreateTokenUseOffer
+###           cancel <token-id>                               CancelTokenUseOffer
+###           remove <token-id>                               RemoveTokenUseAndActivity
+###           take   <token-id>                               TakeTokenUseOffer
+###
+### Example:  evo cmn-tokenuse cancel @offer
+###           evo cmn-tokenuse take @offer
+
+set -e
+
+tokenuse="$(evo --addr-of "CONTRACT_TOKEN_USE")" 
+
+p() { printf "%-9s %-52s \n" "$1" "$2"; }
+
+case $1 in
+  i2s)
+    sig="tokenId2UseStatus(uint256)(address,address,uint48,uint48,uint256,address)"
+    stat=$(seth call "$tokenuse" "$sig" "${2?}")
+    user=$(echo $stat | cut -d' ' -f 1)
+    owner=$(echo $stat | cut -d' ' -f 2)
+    startTime=$(echo $stat | cut -d' ' -f 3)
+    endTime=$(echo $stat | cut -d' ' -f 4)
+    price=$(echo $stat | cut -d' ' -f 5)
+    activity=$(echo $stat | cut -d' ' -f 6)
+    p "user" "$user"
+    p "owner" "$owner"
+    p "startTime" "$startTime"
+    p "endTime" "$endTime"
+    p "price" "$price"
+    p "activity" "$activity"
+  ;;
+  i2o)
+    sig="tokenId2UseOffer(uint256)(address,uint48,uint256,address)"
+    offer=$(seth call "$tokenuse" "$sig" "${2?}")
+    owner=$(echo $offer | cut -d' ' -f 1)
+    duration=$(echo $offer | cut -d' ' -f 2)
+    price=$(echo $offer | cut -d' ' -f 3)
+    activity=$(echo $offer | cut -d' ' -f 4)
+    p "owner" "$owner"
+    p "duration" "$duration"
+    p "price" "$price"
+    p "activity" "$activity"
+  ;;
+  i2a)
+    sig="tokenId2CurrentActivity(uint256)(address,uint48)"
+    act=$(seth call "$tokenuse" "$sig" "${2?}")
+    activity=$(echo $act | cut -d' ' -f 1)
+    endTime=$(echo $act | cut -d' ' -f 2)
+    p "activity" "$activity"
+    p "endTime" "$endTime"
+  ;;
+  hired)
+    sig="isObjectInHireStage(uint256)(bool)"
+    seth call "$tokenuse" "$sig" "${2?}"
+  ;;
+  ready)
+    sig="isObjectReadyToUse(uint256)(bool)"
+    seth call "$tokenuse" "$sig" "${2?}"
+  ;;
+  user)
+    sig="getTokenUser(uint256)(address)"
+    seth call "$tokenuse" "$sig" "${2?}"
+  ;;
+  create)
+    sig="createTokenUseOffer(uint256,uint256,uint256,address)"
+    seth send "$tokenuse" "$sig" "${@:2}"
+  ;;
+  cancel)
+    sig="cancelTokenUseOffer(uint256)"
+    seth send "$tokenuse" "$sig" "${@:2}"
+  ;;
+  remove)
+    sig="removeTokenUseAndActivity(uint256)"
+    seth send "$tokenuse" "$sig" "${@:2}"
+  ;;
+  take)
+    sig="takeTokenUseOffer(uint256)"
+    seth send "$tokenuse" "$sig" "${@:2}"
+  ;;
+  *) evo help cmn-tokenuse
+esac

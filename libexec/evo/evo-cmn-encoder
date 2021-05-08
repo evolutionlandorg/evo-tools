@@ -1,0 +1,75 @@
+#!/usr/bin/env bash
+### evo-cmn-encoder -- Common Encoder management
+### Usage: evo cmn-encoder [<command>]
+###
+### Commands: chainId             Get Chain Id
+###           landId              Get Land Id
+###           o2a     <uint8>     OwnershipId2Address
+###           a2o     <address>   OwnershipAddress2Id
+###           a2i     <address>   ClassAddress2Id
+###           i2a     <uint8>     ClassId2Address
+###           prdId   <token-id>  Get Producer Id
+###           cttAddr <token-id>  Get Contract Address
+###           objId   <token-id>  Get Object Id
+###           objCls  <token-id>  Get Object Class
+###           objAddr <token-id>  Get Object Address
+###           orgAddr <token-id>  Get Origin Address
+###
+### Example:  evo cmn-encoder chainId 
+###           evo cmn-encoder landId 
+
+set -e
+
+encoder="$(evo --addr-of "CONTRACT_INTERSTELLAR_ENCODER")" 
+
+case $1 in
+  chainId)
+    sig="CHAIN_ID()(uint256)"
+    seth call "$encoder" "$sig" 
+  ;;
+  landId)
+    sig="CURRENT_LAND()(uint256)"
+    seth call "$encoder" "$sig"   
+  ;;
+  o2a)
+    sig="ownershipId2Address(uint8)(address)"
+    seth call "$encoder" "$sig" "${2?}" 
+  ;;
+  a2o)
+    sig="ownershipAddress2Id(address)(uint8)"
+    seth call "$encoder" "$sig" "${2?}"
+  ;;
+  a2i)
+    sig="classAddress2Id(address)(uint8)"
+    seth call "$encoder" "$sig" "${2?}"
+  ;;
+  i2a)
+    sig="classId2Address(uint8)(address)"
+    seth call "$encoder" "$sig" "${2?}"
+  ;;
+  prdId)
+    sig="getProducerId(uint256)(uin16)"
+    seth call "$encoder" "$sig" "${2?}"
+  ;;
+  cttAddr)
+    sig="getContractAddress(uint256)(address)"
+    seth call "$encoder" "$sig" "${2?}"
+  ;;
+  objId)
+    sig="getObjectId(uint256)(uint128)"
+    seth call "$encoder" "$sig" "${2?}"
+  ;;
+  objCls)
+    sig="getObjectClass(uint256)(uint8)"
+    seth call "$encoder" "$sig" "${2?}"
+  ;;
+  objAddr)
+    sig="getObjectAddress(uint256)(address)"
+    seth call "$encoder" "$sig" "${2?}"
+  ;;
+  orgAddr)
+    sig="getOriginAddress(uint256)(address)"
+    seth call "$encoder" "$sig" "${2?}"
+  ;;
+  *) evo help cmn-encoder
+esac

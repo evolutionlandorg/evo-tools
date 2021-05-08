@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+### evo-cmn-ownership -- Common Ownership management
+### Usage: evo cmn-ownership [<command>]
+###
+### Commands: balance          <user>                                  BalanceOf
+###           owner            <token-id>                              ownerOf
+###           transferFrom     <from>     <to>       <token-id>        TransferFrom
+###           approve          <from>     <to>       <token-id>        Approve
+###           approved         <to>       <token-id>                   GetApproved
+###           approveAll       <to>       <bool>                       SetApprovalForAll
+###           approvedAll      <from>     <to>                         IsApprovedForAll
+###           safeTransferFrom <from>     <to>       <token-id> <data> SafeTransferFrom
+###
+### Example:  evo cmn-ownership balance @me
+###           evo cmn-ownership owner @land
+
+set -e
+
+ownership="$(evo --addr-of "CONTRACT_OBJECT_OWNERSHIP")" 
+
+case $1 in
+  balance)
+    sig="balanceOf(address)(uint256)"
+    seth call "$ownership" "$sig" "${2?}"
+  ;;
+  owner)
+    sig="ownerOf(uint256)(address)"
+    seth call "$ownership" "$sig" "${2?}"
+  ;;
+  transferFrom)
+    sig="transferFrom(address,address,uint256)"
+    seth send "$ownership" "$sig" "${@:2}"
+  ;;
+  approve)
+    sig="approve(address,uint256)"
+    seth send "$ownership" "$sig" "${@:2}"
+  ;;
+  approved)
+    sig="getApproved(uint256)(address)"
+    seth call "$ownership" "$sig" "${@:2}"
+  ;;
+  approveAll)
+    sig="setApprovalForAll(address,bool)"
+    seth send "$ownership" "$sig" "${@:2}"
+  ;;
+  approvedAll)
+    sig="isApprovedForAll(address,address)"
+    seth call "$ownership" "$sig" "${@:2}"
+  ;;
+  safeTransferFrom)
+    sig="safeTransferFrom(address,address,uint256,bytes)"
+    seth call "$ownership" "$sig" "${@:2}"
+  ;;
+  *) evo help cmn-ownership
+esac

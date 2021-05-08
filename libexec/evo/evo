@@ -1,0 +1,121 @@
+#!/usr/bin/env bash
+### EVO - EVO Command Line Interface
+shopt -s extglob
+
+OPTS="evo [<options>] <command> [<args>]
+evo [<command>] --help
+--
+  Connection options:
+C,chain=chain         chain config - mainnet, ropsten
+
+  Transaction Options:
+F,from=address        account to send from
+G,gas=number          number of gas units to provide
+async                 don't wait for tx receipts
+
+  Filter options:
+B,block=number        from block
+  Other Options:
+
+J,config=file         custom deployment address file (json)
+"
+
+set -e
+
+if ! [[ $SETH_INIT ]]; then
+  export SETH_INIT=1
+  [[ -e ~/.sethrc ]] && . ~/.sethrc
+fi
+
+if [[ $2 = --help ]]; then
+  exec "${0##*/}" help -- "$1"
+elif [[ $1 = -* ]] && command -v "${0##*/}-$1" &>/dev/null; then
+  exec "${0##*/}-$1" "${@:2}"
+fi
+
+eval "$(git rev-parse --parseopt -- "$@" <<<"$OPTS" || echo exit $?)"
+
+while [[ $1 ]]; do
+  case $1 in
+    --)             shift; break;;
+
+    -C|--chain)     shift; export SETH_CHAIN=$1;;
+    -J|--config)    shift; export EVO_CONFIG=$1;;
+
+    -B|--block)     shift; export ETH_BLOCK=$1;;
+
+    -F|--from)      shift; export ETH_FROM=$1;;
+    -G|--gas)       shift; export ETH_GAS=$1;;
+
+       --async)            export SETH_ASYNC=yes;;
+
+    *) printf "${0##*/}: unrecognised option: %q\n" "--$1"; exit 1
+  esac; shift
+done
+
+config-init() {
+  path=${EVO_CONFIG:-$1}
+  if [[ ! -e "$path" ]]; then
+    echo "Config file not found: $path not found"
+    exit 1
+  fi
+  export ADDRESSES_FILE=$path
+  exports=$(cat $path | jq -r ". | \
+    to_entries|map(\"\(.key)=\(.value|tostring)\")|.[]")
+  for e in $exports; do export "$e"; done
+}
+
+evo-init() {
+  if [[ "$SETH_CHAIN" ]]; then  
+    case "$SETH_CHAIN" in
+      mainnet)
+        config-init "${0%/*}/conf/mainnet.json";
+        chain-verify "1"
+        ;;
+      ropsten)
+        config-init "${0%/*}/conf/ropsten.json";
+        chain-verify "3"
+        ;;
+      pangolin)
+        config-init "${0%/*}/conf/pangolin.json";
+        chain-verify "43"
+        ;;
+      crab)
+        config-init "${0%/*}/conf/crab.json";
+        chain-verify "44"
+        ;;
+      kovan)
+        config-init "${0%/*}/conf/kovan.json";
+        chain-verify "42"
+        ;;
+      hecotest)
+        config-init "${0%/*}/conf/hecotest.json";
+        chain-verify "256"
+        ;;
+      bsctest)
+        config-init "${0%/*}/conf/bsctest.json";
+        chain-verify "97"
+        ;;
+      *)
+        if [[ "$@" != *"help"* ]]; then
+          echo "Warning: \`--chain' option not specified. Defaulting to ropsten"
+          config-init "${0%/*}/conf/ropsten.json";
+          export SETH_CHAIN=ropsten
+        fi
+    esac
+  fi
+}
+
+chain-verify() {
+  EXPECTED="$1"
+  ACTUAL="$(seth rpc net_version)"
+  if [ "$EXPECTED" != "$ACTUAL" ]; then
+    echo "Ethereum network version is incorrect."
+    echo "Verify ETH_RPC_URL is set to $SETH_CHAIN (Expected $EXPECTED, got $ACTUAL)"
+    exit 1
+  fi
+}
+
+evo-init
+
+"${0##*/}-${1-help}" "${@:2}"
