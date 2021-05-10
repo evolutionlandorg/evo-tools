@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+### evo-lnd -- Land management
+### Usage: evo lnd [<command>]
+###
+### Commands: lnd bas LandBase management
+###           lnd res LandResource management
+###           lnd bar LandResource management
+###           lnd mst MysteriousTreasure management
+###
+### Example:  evo lnd bas i2a @land 
+###           evo lnd res mine
+
+set -e
+
+case $1 in
+  bas)
+    evo lnd-bas "${@:2}"
+  ;;
+  bar)
+    evo lnd-bar "${@:2}"
+  ;;
+  res)
+    evo lnd-res "${@:2}"
+  ;;
+  mst)
+    evo lnd-mst "${@:2}"
+  ;;
+  *) evo help lnd
+esac
+	
+set -e

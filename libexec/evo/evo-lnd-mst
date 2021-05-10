@@ -1,0 +1,37 @@
+#!/usr/bin/env bash 
+### evo-lnd-mst -- Land mstource management
+### Usage: evo lnd-mst [<command>]
+###
+### Commands: rsp      <uint256>   ResourcePool 
+###           total                TotalBoxNotOpened
+###           setRSP   <key> <res> SetResourcePool
+###           setTotal <key> <res> SetTotalBoxNotOpened
+###
+### Example:  evo rsp 0
+###           evo total 
+
+set -e
+
+mst="$(evo --addr-of "CONTRACT_MYSTERIOUS_TREASURE")" 
+
+case $1 in
+  rsp)
+    sig="resourcePool(uint256)(uint256)"
+    seth call "$mst" "$sig" "${@:2}" 
+  ;;
+  total)
+    sig="totalBoxNotOpened()(uint256)"
+    seth call "$mst" "$sig"  
+  ;;
+  setRSP)
+    sig="setResourcePool(uint,uint)"
+    seth send "$mst" "$sig" "${@:2}" 
+  ;;
+  setTotal)
+    sig="setTotalBoxNotOpened(uint)"
+    seth send "$mst" "$sig" "${@:2}" 
+  ;;
+  *) evo help land-mst 
+esac
+	
+set -e

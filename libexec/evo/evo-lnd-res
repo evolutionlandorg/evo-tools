@@ -1,0 +1,112 @@
+#!/usr/bin/env bash 
+### evo-lnd-res -- Land Resource management
+### Usage: evo lnd-res [<command>]
+###
+### Commands: mms                                            MaxMiners 
+###           setMMS        <uint256>                        SetMaxMiners
+###           l2s           <land-id>  <res-addr>            Land2ResourceMineState
+###           m2i           <miner-id>                       Miner2Index
+###           rs            <land-id>  <res-addr> <time>     GetReleaseSpeed
+###           mine                                           Mine
+###           start         <miner-id> <land-id>  <res-addr> StartMining
+###           stop          <miner-id>                       StopMining
+###           balance       <land-id>  <res-addr>            GetLandMinedBalance
+###           strength      <land-id>  <res-addr>            GetLandMiningStrength
+###           totalStrength <land-id>  <res-addr>            GetTotalMiningStrength
+###           miner         <land-id>  <res-addr> <index>    GetMinerOnLand
+###           land          <miner-id>                       LandWorkingOn
+###           claim         <land-id>                        ClaimLandResource
+###           ava           <land-id>  <res-addr[]>          AvailableLandResources
+###
+### Example:  evo lnd res mms
+###           evo lnd res m2i @apostle
+
+set -e
+
+res="$(evo --addr-of "CONTRACT_LAND_RESOURCE")" 
+
+p() { printf "%-25s %-52s \n" "$1" "$2"; }
+
+case $1 in
+  mms)
+    sig="maxMiners()(int256)"
+    seth call "$res" "$sig" 
+  ;;
+  setMMS)
+    sig="setMaxMiners(uint256)"
+    seth call "$res" "$sig" 
+  ;;
+  l2s)
+    sig="land2ResourceMineState(uint256)(uint256,uint256,uint256,uint256,uint256,uint256)"
+    stat=$(seth call "$res" "$sig" "${2?}")
+    lastUpdateSpeedInSeconds=$(echo $stat | cut -d' ' -f 1)
+    lastDestoryAttenInSeconds=$(echo $stat | cut -d' ' -f 2)
+    industryIndex=$(echo $stat | cut -d' ' -f 3)
+    lastUpdateTime=$(echo $stat | cut -d' ' -f 4)
+    totalMiners=$(echo $stat | cut -d' ' -f 5)
+    maxMiners=$(echo $stat | cut -d' ' -f 6)
+    p "lastUpdateSpeedInSeconds" "$lastUpdateSpeedInSeconds"
+    p "lastDestoryAttenInSeconds" "$lastDestoryAttenInSeconds"
+    p "industryIndex" "$industryIndex"
+    p "lastUpdateTime" "$lastUpdateTime"
+    p "totalMiners" "$totalMiners"
+    p "maxMiners" "$maxMiners"
+  ;;
+  m2i)
+    sig="miner2Index(uint256)(uint256,address,uint64)"
+    stat=$(seth call "$res" "$sig" "${2?}")
+    landTokenId=$(echo $stat | cut -d' ' -f 1)
+    resource=$(echo $stat | cut -d' ' -f 2)
+    indexInResource=$(echo $stat | cut -d' ' -f 3)
+    p "landTokenId" "$landTokenId"
+    p "resource" "$resource"
+    p "indexInResource" "$indexInResource"
+  ;;
+  rs)
+    sig="getReleaseSpeed(uint256,address,uint256)"
+    seth call "$res" "$sig" "${@:2}"
+  ;;
+  mine)
+    sig="mine(uint256)"
+    seth send "$res" "$sig" "${@:2}"
+  ;;
+  start)
+    sig="startMining(uint256,uint256,address)"
+    seth send "$res" "$sig" "${@:2}"
+  ;;
+  stop)
+    sig="stopMining(uint256)"
+    seth send "$res" "$sig" "${@:2}"
+  ;;
+  balance)
+    sig="getLandMinedBalance(uint256,address)(uint256)"
+    seth --to-fix 18 $(seth call "$res" "$sig" "${@:2}")
+  ;;
+  strength)
+    sig="getLandMiningStrength(uint256,address)(uint256)"
+    seth --to-fix 18 $(seth call "$res" "$sig" "${@:2}")
+  ;;
+  totalStrength)
+    sig="getTotalMiningStrength(uint256,address)(uint256)"
+    seth --to-fix 18 $(seth call "$res" "$sig" "${@:2}")
+  ;;
+  miner)
+    sig="getMinerOnLand(uint256,address,uint256)(uint256)"
+    seth call "$res" "$sig" "${@:2}"
+  ;;
+  land)
+    sig="landWorkingOn(uint256)(uint256)"
+    seth call "$res" "$sig" "${@:2}"
+  ;;
+  claim)
+    sig="claimLandResource(uint256)"
+    seth send "$res" "$sig" "${@:2}"
+  ;;
+  ava)
+    sig="availableLandResources(uint256,address[])(uint256[])"
+    seth call "$res" "$sig" "${@:2}"
+  ;;
+  *) evo help land-res 
+esac
+	
+set -e

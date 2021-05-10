@@ -2,12 +2,12 @@
 ### evo-cmn -- Common management
 ### Usage: evo cmn [<command>]
 ###
-### Commands: cmn reg regsRegistry
-###           cmn enc InterstellarencV4
-###           cmn tkn ObjectOwnership
-###           cmn loc TokenLocation
-###           cmn use TokenUse
-###           cmn pts UserPoints
+### Commands: cmn reg SettingsRegistry management
+###           cmn enc InterstellarencV4 management 
+###           cmn tkn ObjectOwnership management
+###           cmn loc TokenLocation management
+###           cmn use TokenUse management
+###           cmn pts UserPoints management
 ###
 ### Example:  evo cmn reg uintOf UINT_AUCTION_CUT
 ###           evo cmn enc getObjectClass @land

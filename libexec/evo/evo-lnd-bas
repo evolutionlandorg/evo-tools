@@ -1,0 +1,137 @@
+#!/usr/bin/env bash
+### evo-lnd-bas -- Land Base management
+### Usage: evo lnd-bas [<command>]
+###
+### Commands: xLow                                                 Range x-low 
+###           xHigh                                                Range x-high
+###           yLow                                                 Range y-low
+###           yHigh                                                Range y-high
+###           r2a     <res-addr>                                   ResourceToken2RateAttrId
+###           i2a     <token-id>                                   TokenId2LandAttr
+###           l2i     <loc-id>                                     LocationId2TokenId
+###           oid                                                  LastLandObjectId
+###           new     <x>        <y>        <bene> <rate> <mask>   AssignNewLand
+###           mnew    <x[]>      <y[]>      <bene> <rate> <mask[]> AssignMultipleLands
+###           dr2a    <res-addr> <attr-id>                         DefineResouceTokenRateAttrId
+###           loc     <x>        <y>                               GetTokenIdByLocation
+###           exs     <x>        <y>                               Exists
+###           owner   <x>        <y>                               OwnerOfLand
+###           owners  <x[]>      <y[]>                             OwnerOfLandMany
+###           land    <holder>                                     LandOf
+###           box     <token-id>                                   IsHasBox
+###           rsv     <token-id>                                   IsReserved
+###           spc     <token-id>                                   IsSpecial
+###           setBox  <token-id> <bool>                            SetHasBox
+###           rra     <token-id> <bool>                            GetResourceRateAttr
+###           setRRA  <token-id> <attr-id>                         SetResourceRateAttr
+###           mask    <token-id>                                   GetFlagMask
+###           setMask <token-id> <mask>                            SetFlagMask
+###           rate    <token-id> <res-addr>                        GetResourceRate
+###           setRate <token-id> <res-addr> <rate>                 SetResourceRate
+###
+### Example:  evo lnd bas i2a @land 
+###           evo lnd res mine
+
+set -e
+
+bas="$(evo --addr-of "CONTRACT_LAND_BASE")" 
+
+p() { printf "%-12s %-52s \n" "$1" "$2"; }
+
+case $1 in
+  xLow)
+    sig="xLow()(int256)"
+    seth call "$bas" "$sig" 
+  ;;
+  xHigh)
+    sig="xHigh()(int256)"
+    seth call "$bas" "$sig" 
+  ;;
+  yLow)
+    sig="yLow()(int256)"
+    seth call "$bas" "$sig" 
+  ;;
+  yHigh)
+    sig="yHigh()(int256)"
+    seth call "$bas" "$sig" 
+  ;;
+  r2a)
+    sig="resourceToken2RateAttrId(address)(int8)"
+    seth call "$bas" "$sig" "${2?}"
+  ;;
+  i2a)
+    sig="tokenId2LandAttr(uint256)(uint256,uint256)"
+    attr=$(seth call "$bas" "$sig" "${2?}")
+    resourceRateAttr=$(echo $attr | cut -d' ' -f 1)
+    mask=$(echo $attr | cut -d' ' -f 2)
+    p "resourceRateAttr" "$resourceRateAttr"
+    p "mask" "$mask"
+  ;;
+  l2i)
+    sig="locationId2TokenId(uint256)(uint256)"
+    seth call "$bas" "$sig" "${2?}"
+  ;;
+  oid)
+    sig="lastLandObjectId()(uint256)"
+    seth call "$bas" "$sig" 
+  ;;
+  new)
+    sig="assignNewLand(int,int,address,uint256,uint256)"
+    seth send "$bas" "$sig" "${@:2}"
+  ;;
+  mnew)
+    sig="assignNewLand(int[],int[],address,uint256,uint256[])"
+    seth send "$bas" "$sig" "${@:2}"
+  ;;
+  dr2a)
+    sig="defineResouceTokenRateAttrId(address,uint8)"
+    seth send "$bas" "$sig" "${@:2}"
+  ;;
+  loc)
+    sig="getTokenIdByLocation(int,int)(uint256)"
+    seth call "$bas" "$sig" "${@:2}"
+  ;;
+  exs)
+    sig="exists(int,int)(bool)"
+    seth call "$bas" "$sig" "${@:2}"
+  ;;
+  owner)
+    sig="ownerOfLand(int,int)(address)"
+    seth call "$bas" "$sig" "${@:2}"
+  ;;
+  owners)
+    sig="ownerOfLand(int[],int[])(address[])"
+    seth call "$bas" "$sig" "${@:2}"
+  ;;
+  land)
+    sig="landOf(address)(int[],int[])"
+    seth call "$bas" "$sig" "${@:2}"
+  ;;
+  box)
+    sig="isHasBox(uint256)(bool)"
+    seth call "$bas" "$sig" "${@:2}"
+  ;;
+  rsv)
+    sig="isReserved(uint256)(bool)"
+    seth call "$bas" "$sig" "${@:2}"
+  ;;
+  spc)
+    sig="isSpecial(uint256)(bool)"
+    seth call "$bas" "$sig" "${@:2}"
+  ;;
+  setBox)
+    sig="setHasBox(uint,bool)"
+    seth send "$bas" "$sig" "${@:2}"
+  ;;
+  rate)
+    sig="getResourceRate(uint,address)(uint16)"
+    seth call "$bas" "$sig" "${@:2}"
+  ;;
+  setRate)
+    sig="setResourceRate(uint,address,uint16)"
+    seth send "$bas" "$sig" "${@:2}"
+  ;;
+  *) evo help land-bas 
+esac
+	
+set -e

@@ -2,11 +2,11 @@
 ### evo-cmn-reg -- Common Registry management
 ### Usage: evo cmn-reg [<command>]
 ###
-### Commands: ls                        List all regs
-###           uintOf     <id>           Get uint property of id
-###           addressOf  <id>           Get address property of id
-###           setUint    <id> <uint>    Set uint property of id
-###           setAddress <id> <address> Set address property of id
+### Commands: ls                     List all regs
+###           uintOf  <id>           Get uint property of id
+###           addrOf  <id>           Get address property of id
+###           setUint <id> <uint>    Set uint property of id
+###           setAddr <id> <address> Set address property of id
 ###
 ### Example:  evo cmn-reg uintOf UINT_AUCTION_CUT
 ###           evo cmn-reg setUint UINT_AUCTION_CUT 400
@@ -24,7 +24,7 @@ case $1 in
     id=$(evo --to-id "${2?}")
     seth call "$reg" "$sig" "$id"   
   ;;
-  addressOf)
+  addrOf)
     sig="addressOf(bytes32)(address)"
     id=$(evo --to-id "${2?}")
     seth call "$reg" "$sig" "$id"   
@@ -34,7 +34,7 @@ case $1 in
     id=$(evo --to-id "${2?}")
     seth send "$reg" "$sig" "$id" "${3?}"
   ;;
-  setAddress)
+  setAddr)
     sig="setAddressProperty(bytes32,address)"
     id=$(evo --to-id "${2?}")
     seth send "$reg" "$sig" "$id" "${3?}"

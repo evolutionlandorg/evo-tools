@@ -1,0 +1,108 @@
+#!/usr/bin/env bash
+### evo-lnd-bar -- Land Item Bar management
+### Usage: evo lnd-bar [<command>]
+###
+### Commands: mat                                                                MaxAmount 
+###           setMAS        <uint256>                                            SetMaxAmount
+###           l2b           <land-id>   <index>                                  LandId2Bars
+###           i2s           <item-addr> <item-id>                                itemId2Status
+###           i2p           <item-addr> <item-id>                                ProtectPeriod
+###           balance       <item-addr> <item-id>  <res-addr>                    GetItemMinedBalance
+###           strength      <land-id>   <res-addr> <index>                       GetBarMiningStrength
+###           totalStrength <land-id>   <res-addr>                               GetBarsMiningStrength
+###           rate          <land-id>   <res-addr> <index>                       GetBarRate
+###           rates         <land-id>   <res-addr>                               GetBarsRate
+###           claim         <item-addr> <item-id>                                ClaimItemResource
+###           equip         <land-id>   <res-addr> <index> <item-addr> <item-id> Equip
+###           divest        <land-id>   <index>                                  Divest 
+###           ava           <item-addr> <item-id>  <res-addr[]>                  AvailableItemResources
+###           protected     <item-addr> <item-id>                                IsNotProtect
+###
+### Example:  evo lnd bar mas
+###           evo lnd bar setMAS 5
+
+set -e
+
+bar="$(evo --addr-of "CONTRACT_LAND_RESOURCE")" 
+
+p() { printf "%-10s %-52s \n" "$1" "$2"; }
+
+case $1 in
+  mas)
+    sig="maxAmount()(int256)"
+    seth call "$bar" "$sig" 
+  ;;
+  setMAS)
+    sig="setMaxAmount(uint256)"
+    seth call "$bar" "$sig" 
+  ;;
+  l2b)
+    sig="landId2Bars(uint256,uint256)(address,address,uint256,address)"
+    landBar=$(seth call "$bar" "$sig" "${@:2}")
+    staker=$(echo $landBar | cut -d' ' -f 1)
+    token=$(echo $landBar | cut -d' ' -f 2)
+    id=$(echo $landBar | cut -d' ' -f 3)
+    resource=$(echo $landBar | cut -d' ' -f 4)
+    p "staker" "$staker"
+    p "token" "$token"
+    p "id" "$id"
+    p "resource" "$resource"
+  ;;
+  i2s)
+    sig="itemId2Status(address,uint256)(address,uint256,uint256)"
+    stat=$(seth call "$bar" "$sig" "${@:2}")
+    staker=$(echo $stat | cut -d' ' -f 1)
+    tokenId=$(echo $stat | cut -d' ' -f 2)
+    index=$(echo $stat | cut -d' ' -f 3)
+    p "staker" "$staker"
+    p "tokenId" "$tokenId"
+    p "index" "$index"
+  ;;
+  i2p)
+    sig="protectPeriod(address,uint256)(uint256)"
+    seth call "$bar" "$sig" "${@:2}"
+  ;;
+  balance)
+    sig="getItemMinedBalance(address,uint256,address)(uint256)"
+    seth call "$bar" "$sig" "${@:2}"
+  ;;
+  strength)
+    sig="getBarMiningStrength(uint256,address,uint256)(uint256)"
+    seth call "$bar" "$sig" "${@:2}"
+  ;;
+  totalStrength)
+    sig="getBarsMiningStrength(uint256,address)(uint256)"
+    seth call "$bar" "$sig" "${@:2}"
+  ;;
+  rate)
+    sig="getBarRate(uint256,address,uint256)(uint256)"
+    seth call "$bar" "$sig" "${@:2}"
+  ;;
+  rates)
+    sig="getBarsRate(uint256,address)(uint256)"
+    seth call "$bar" "$sig" "${@:2}"
+  ;;
+  claim)
+    sig="claimItemResource(address,uint256)"
+    seth send "$bar" "$sig" "${@:2}"
+  ;;
+  equip)
+    sig="equip(uint256,address,uint256,address,uint256)"
+    seth send "$bar" "$sig" "${@:2}"
+  ;;
+  divest)
+    sig="divest(uint256,uint256)"
+    seth send "$bar" "$sig" "${@:2}"
+  ;;
+  ava)
+    sig="availableItemResources(address,uint256,address[])(uint256[])"
+    seth call "$bar" "$sig" "${@:2}"
+  ;;
+  protected)
+    sig="isNotProtect(address,uint256)(uint256[])"
+    seth call "$bar" "$sig" "${@:2}"
+  ;;
+  *) evo help land-bar 
+esac
+  
+set -e
