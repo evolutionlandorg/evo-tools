@@ -61,8 +61,7 @@
   fi
 
   echo "Installing evo-cli... (this will take a while)"
-  # nix-env -i -f https://github.com/evolutionlandorg/evo-tools/tarball/master 
-  nix-env -i -f ~/workspace/contract/evolutionlandorg/evo-tools 
+  nix-env -i -f https://github.com/evolutionlandorg/evo-tools/tarball/master 
   # Finished!
   cat <<EOF
 
