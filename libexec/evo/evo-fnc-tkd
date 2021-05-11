@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+### evo-fnc-tkd -- Market Drill TakeBack Management
+### Usage: evo fnc-tkd [<command>]
+###
+### Commands: sup                                         Supervisor
+###           net                                         NetworkId
+###           ids    <id>                                 Ids 
+###           take   <id[]> <grade[]>  <hash> <v> <r> <s> TakeBack
+###           open   <id[]> <amount[]> <hash> <v> <r> <s> TakeBack
+###           setSup <sup>                                ChangeSupervisor
+###
+### Example:  evo fnc-tkd sup 
+
+set -e
+
+tkd="${DRILLTAKEBACK?}" 
+
+case $1 in
+  sup)
+    sig="supervisor()(address)"
+    seth call "$tkd" "$sig"
+  ;;
+  net)
+    sig="networkId()(uint256)"
+    seth call "$tkd" "$sig"
+  ;;
+  ids)
+    sig="ids(address)(bool)"
+    seth call "$tkd" "$sig" "${2?}"
+  ;;
+  take)
+    sig="takeBack(uint256[],uint16[],bytes32,uint8,bytes32,bytes32)"
+    seth send "$tkd" "$sig" "${@:2}"
+  ;;
+  open)
+    sig="openBoxes(uint256[],uint256[],bytes32,uint8,bytes32,bytes32)"
+    seth send "$tkd" "$sig" "${@:2}"
+  ;;
+  setSup)
+    sig="changeSupervisor(address)"
+    seth send "$tkd" "$sig" "${@:2}"
+  ;;
+  *) evo help fnc-tkd
+esac

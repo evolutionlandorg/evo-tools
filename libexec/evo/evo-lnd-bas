@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-### evo-lnd-bas -- Land Base management
+### evo-lnd-bas -- Land Base Management
 ### Usage: evo lnd-bas [<command>]
 ###
 ### Commands: xLow                                                 Range x-low 

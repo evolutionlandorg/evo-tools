@@ -1,0 +1,88 @@
+#!/usr/bin/env bash
+### evo-apo-bas -- Apostle Base Management
+### Usage: evo apo-bas [<command>]
+###
+### Commands: oid                                                              LastApostleObjectId
+###           i2a      <token-id>                                              TokenId2Apostle
+###           s2a      <token-id> <x>        <y>                               SireAllowedToAddress
+###           new      <m-id>     <s-id>     <gen>     <gene> <talent> <owner> CreateApostle
+###           cool     <token-id>                                              GetCooldownDuration
+###           sir      <addr>     <s-id>                                       ApproveSiring
+###           rbreed   <token-id>                                              isReadyToBreed
+###           cbreed   <m-id>     <s-id>                                       CanBreedWith
+###           aucbreed <m-id>     <s-id>                                       BreedWithInAuction
+###           autbreed <m-id>     <s-id>                                       breedWithAuto
+###           birth    <m-id>     <res-addr> <level>                           GiveBirth
+###           strength <apo-id>   <res-addr> <land-id>                         StrengthOf
+###           update   <apo-id>   <gene>     <talent>                          UpdateGenesAndTalents
+###
+### Example:  evo apo-bas oid
+###           evo apo-bas i2a @apostle
+
+set -e
+
+bas="$(evo --addr-of "CONTRACT_APOSTLE_BASE")" 
+
+p() { printf "%-15s %-52s \n" "$1" "$2"; }
+
+case $1 in
+  oid)
+    sig="lastApostleObjectId()(uint256)"
+    seth call "$bas" "$sig" 
+  ;;
+  i2a)
+    sig="tokenId2Apostle(uint256)(uint256,uint256,uint256,uint256,uint256,uint16,uint16,uint48,uint48,uint48,uint48)"
+    keys=("genes" "talents" "matronId" "sireId" "siringWithId" "cooldownIndex" "generation" "birthTime" "activeTime" "deadTime" "cooldownEndTime")
+    apostle=$(seth call "$bas" "$sig" "${2?}")
+    for i in "${!keys[@]}"; do
+      ((idx="$i"+1))
+      value=$(echo $apostle | cut -d' ' -f "$idx") 
+      p "${keys[i]}" "$value"
+    done
+  ;;
+  s2a)
+    sig="sireAllowedToAddress(uint256)(address)"
+    seth call "$bas" "$sig" "${@:2}"
+  ;;
+  new)
+    sig="createApostle(uint256,uint256,uint256,uint256,uint256,address)"
+    seth send "$bas" "$sig" "${@:2}"
+  ;;
+  cool)
+    sig="getCooldownDuration(uint256)(uint256)"
+    seth call "$bas" "$sig" "${@:2}"
+  ;;
+  rbreed)
+    sig="isReadyToBreed(uint256)(bool)"
+    seth call "$bas" "$sig" "${@:2}"
+  ;;
+  cbreed)
+    sig="canBreedWith(uint256,uint256)(bool)"
+    seth call "$bas" "$sig" "${@:2}"
+  ;;
+  aucbreed)
+    sig="breedWithInAuction(uint256,uint256)(bool)"
+    seth send "$bas" "$sig" "${@:2}"
+  ;;
+  autbreed)
+    sig="breedWithAuto(uint256,uint256)"
+    seth send "$bas" "$sig" "${@:2}"
+  ;;
+  birth)
+    sig="giveBirth(uint256,address,uint256)"
+    seth send "$bas" "$sig" "${@:2}"
+  ;;
+  sir)
+    sig="approveSiring(address,uint256)"
+    seth send "$bas" "$sig" "${@:2}"
+  ;;
+  strength)
+    sig="strengthOf(uint256,address,uint256)(uint256)"
+    seth call "$bas" "$sig" "${@:2}"
+  ;;
+  update)
+    sig="updateGenesAndTalents(uint256,uint256,uint256)"
+    seth send "$bas" "$sig" "${@:2}"
+  ;;
+  *) evo help apo-bas
+esac

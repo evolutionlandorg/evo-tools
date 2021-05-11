@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+### evo-fnc-drl -- Furnace Drill Base Management
+### Usage: evo fnc-drl [<command>]
+###
+### Commands: oid                          LastDrillObjectId
+###           new <grade> <to>             CreateDrill
+###           del <to>    <token-id>       DestroyDrill 
+###
+### Example:  evo fnc-drl oid 
+
+set -e
+
+drl="$(evo --addr-of "CONTRACT_DRILL_BASE")" 
+
+case $1 in
+  oid)
+    sig="lastDrillObjectId()(uint256)"
+    seth call "$drl" "$sig" 
+  ;;
+  new)
+    sig="createDrill(uint16,address)(uint256)"
+    seth send "$drl" "$sig" "${@:2}"
+  ;;
+  del)
+    sig="destroyDrill(address,uint256)(uint256)"
+    seth send "$drl" "$sig" "${@:2}"
+  ;;
+  *) evo help fnc-drl
+esac

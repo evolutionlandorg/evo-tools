@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-### evo-cmn-reg -- Common Registry management
+### evo-cmn-reg -- Common Registry Management
 ### Usage: evo cmn-reg [<command>]
 ###
 ### Commands: ls                     List all regs
@@ -13,7 +13,7 @@
 
 set -e
 
-reg="${regSREGISTRY?}" 
+reg="${SETTINGSREGISTRY?}" 
 
 case $1 in
   ls)

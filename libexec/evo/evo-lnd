@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-### evo-lnd -- Land management
+### evo-lnd -- Land Management
 ### Usage: evo lnd [<command>]
 ###
 ### Commands: lnd bas LandBase management

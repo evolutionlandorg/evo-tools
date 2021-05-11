@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+### evo-fnc -- Furnace Management
+### Usage: evo fnc [<command>]
+###
+### Commands: fnc drl DrillBase management
+###           fnc itm ItemBase management
+###           fnc box DrillBox management
+###           fnc tkd DrillTakeBack management
+###           fnc fml Formula management
+###           fnc tel MetaDataTeller management
+###
+### Example:  evo drl info @drill
+###           evo itm dis @drill 
+
+set -e
+
+case $1 in
+  drl)
+    evo fnc-drl "${@:2}"
+  ;;
+  itm)
+    evo fnc-itm "${@:2}"
+  ;;
+  box)
+    evo fnc-box "${@:2}"
+  ;;
+  tkd)
+    evo fnc-tkd "${@:2}"
+  ;;
+  fml)
+    evo fnc-fml "${@:2}"
+  ;;
+  tel)
+    evo fnc-tel "${@:2}"
+  ;;
+  *) evo help fnc
+esac
+	
+set -e

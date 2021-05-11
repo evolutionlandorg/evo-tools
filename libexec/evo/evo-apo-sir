@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+### evo-apo-sir -- Apostle SiringAuction Management
+### Usage: evo apo-sir [<command>]
+###
+### Commands: i2a    <token-id>                                                         TokenIdTosirtion
+###           new    <token-id> <start-price> <end-price> <duration> <start-at> <token> Createsirtion
+###           cancel <token-id>                                                         Cancelsirtion
+###           claim  <token-id>                                                         ClaimApostleAsset
+###           price  <token-id>                                                         GetCurrentPriceInToken
+###
+### Example:  evo apo-sir i2a @apostle 
+###           evo apo-sir price @apostle
+
+set -e
+
+sir="$(evo --addr-of "CONTRACT_SIRING_AUCTION")" 
+
+p() { printf "%-15s %-52s \n" "$1" "$2"; }
+
+case $1 in
+  i2a)
+    sig="tokenIdToAuction(uint256)(address,uint128,uint128,uint48,uint48,address)"
+    keys=("seller" "startingPriceInToken" "endingPriceInToken" "duration" "startAt" "token")
+    sirtion=$(seth call "$sir" "$sig" "${2?}")
+    for i in "${!keys[@]}"; do
+      ((idx="$i"+1))
+      value=$(echo $sirtion | cut -d' ' -f "$idx") 
+      p "${keys[i]}" "$value"
+    done
+  ;;
+  cancel)
+    sig="cancelAuction(uint256)"
+    seth send "$sir" "$sig" "${@:2}"
+  ;;
+  price)
+    sig="getCurrentPriceInToken(uint256)(uint256)"
+    seth --to-fix 18 $(seth send "$sir" "$sig" "${@:2}")
+  ;;
+  *) evo help apo-sir
+esac

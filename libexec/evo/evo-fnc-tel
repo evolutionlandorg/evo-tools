@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+### evo-fnc-tel -- Furnace MetaData Teller Management
+### Usage: evo fnc-tel [<command>]
+###
+### Commands: meta       <addr> <id>                   MetaDataTeller meta data
+###           prefer     <addr> <id>                   MetaDataTeller getPrefer
+###           rate       <addr> <id>    <ele>          MetaDataTeller item rate
+###           inter      <id>   <grade>                MetaDataTeller internalToken2Meta
+###           exter-objc <addr>                        MetaDataTeller getExternalObjectClassExt
+###           exter-rate <addr> <grade>                MetaDataTeller getExternalStrengthRate
+###           addi       <id>   <grade> <rate>         MetaDataTeller addInternalTokenMeta
+###           addx       <addr> <objc>  <grade> <rate> MetaDataTeller addExternalTokenMeta
+###           rmi        <id>   <grade>                MetaDataTeller removeInternalTokenMeta
+###           rmx        <addr>                        MetaDataTeller removeExternalTokenMeta
+###
+### Example:  evo fnc-tel rate 
+
+set -e
+
+tel="$(evo --addr-of "CONTRACT_METADATA_TELLER")" 
+
+case $1 in
+  meta)
+    seth call $tel "getMetaData(address,uint256)(uint16,uint16,uint16)" $2 $3
+  ;;
+  prefer)
+    seth call $tel "getPrefer(bytes32,address)(uint16)" $2 $3 
+  ;;
+  rate)
+    seth call $tel "getRate(address,uint256,uint256)(uint256)" $2 $3 $4
+  ;;
+  inter)
+    seth call $tel "internalToken2Meta(bytes32,uint16)(uint256)" "${@:2}"
+  ;;
+  exter-objc)
+    seth call $tel "getExternalObjectClassExt(address)(uint256)" "${@:2}"
+  ;;
+  exter-rate)
+    seth call $tel "getExternalStrengthRate(address,uint16)(uint256)" "${@:2}"
+  ;;
+  addi)
+    seth send $tel "addInternalTokenMeta(bytes32,uint16,uint256)" "${@:2}"
+  ;;
+  addx)
+    seth send $tel "addExternalTokenMeta(address,uint16,uint16,uint256)" "${@:2}"
+  ;;
+  rmi)
+    seth send $tel "removeInternalTokenMeta(bytes32,uint16)" "${@:2}"
+  ;;
+  rmx)
+    seth send $tel "removeExternalTokenMeta(address)" "${@:2}"
+  ;;
+     *) fnc help tel;;
+esac
+	

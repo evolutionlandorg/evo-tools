@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-### evo-lnd-bar -- Land Item Bar management
+### evo-lnd-bar -- Land Item Bar Management
 ### Usage: evo lnd-bar [<command>]
 ###
 ### Commands: mat                                                                MaxAmount 

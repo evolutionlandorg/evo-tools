@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+### evo-apo-gen -- Apostle Gen0 Management
+### Usage: evo apo-gen [<command>]
+###
+### Commands: op                                                                        Operator
+###           cnt                                                                       Gen0Count
+###           new    <gene>     <talent>      <owner>                                   CreateGen0Apostle
+###           auc    <token-id> <start-price> <end-price> <duration> <start-at> <token> CreateGen0Auction
+###           cancel <token-id>                                                         CancelAuction
+###           setOp  <operator>                                                         SetOperator
+###
+### Example:  evo apo-gen op
+###           evo apo-gen cnt 
+
+set -e
+
+gen="${GEN0APOSTLE_PROXY?}" 
+
+p() { printf "%-15s %-52s \n" "$1" "$2"; }
+
+case $1 in
+  op)
+    sig="operator()(address)"
+    seth call "$gen" "$sig" 
+  ;;
+  cnt)
+    sig="gen0Count()(uint256)"
+    seth call "$gen" "$sig" 
+  ;;
+  new)
+    sig="createGen0Apostle(uint256,uint256,address)"
+    seth send "$gen" "$sig" "${@:2}"
+  ;;
+  auc)
+    sig="createGen0Auction(uint256,uint256,uint256,uint256,uint256,address)"
+    seth send "$gen" "$sig" "${@:2}"
+  ;;
+  cancel)
+    sig="cancelAuction(uint256)"
+    seth send "$gen" "$sig" "${@:2}"
+  ;;
+  setOp)
+    sig="setOperator(address)"
+    seth send "$gen" "$sig" "${@:2}"
+  ;;
+  *) evo help apo-gen
+esac

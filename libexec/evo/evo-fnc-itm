@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+### evo-fnc-itm -- Furnace Drill Base Management
+### Usage: evo fnc-itm [<command>]
+###
+### Commands: oid                                     LastItemObjectId
+###           i2i  <token-id>                         TokenId2Item
+###           ent  <fml-idx>  <token-id> <token-addr> Enchant
+###           dis  <token-id> <depth>                 Disenchant
+###           rate <token-id> <ele>                   GetRate
+###
+### Example:  evo fnc-itm oid 
+
+set -e
+
+itm="$(evo --addr-of "CONTRACT_ITEM_BASE")" 
+
+p() { printf "%-11s %-52s \n" "$1" "$2"; }
+
+case $1 in
+  oid)
+    sig="lastItemObjectId()(uint256)"
+    seth call "$itm" "$sig" 
+  ;;
+  i2i)
+    sig="tokenId2Item(uint256)(uint256,uint128,uint16,uint16,uint16,uint16,address,uint256,address,uint256)"
+    seth call "$itm" "$sig" "${@:2}"
+    keys=("index" "rate" "objClassExt" "class" "grade" "prefer" "major" "id" "minor" "amount")
+    item=$(seth call "$bas" "$sig" "${2?}")
+    for i in "${!keys[@]}"; do
+      ((idx="$i"+1))
+      value=$(echo "$item" | cut -d' ' -f "$idx") 
+      p "${keys[i]}" "$value"
+    done
+  ;;
+  ent)
+    sig="enchant(uint256,uint256,address)(uint256)"
+    seth send "$itm" "$sig" "${@:2}"
+  ;;
+  dis)
+    sig="disenchant(uint256,uint256)"
+    seth send "$itm" "$sig" "${@:2}"
+  ;;
+  rate)
+    sig="getRate(uint256,uint256)(uint256)"
+    seth call "$itm" "$sig" "${@:2}"
+  ;;
+  *) evo help fnc-itm
+esac

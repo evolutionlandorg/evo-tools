@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+### evo-mkt -- Market Management
+### Usage: evo mkt [<command>]
+###
+### Commands: mkt auc LandClockAuction management
+###           mkt gen GenesisHolder management
+###           mkt pts PointsRewardPool management
+###           mkt rvn RevenuePool management
+###
+### Example:  evo mkt auc claim @land 
+###           evo rvn settle
+
+set -e
+
+case $1 in
+  auc)
+    evo mkt-auc "${@:2}"
+  ;;
+  gen)
+    evo mkt-gen "${@:2}"
+  ;;
+  pts)
+    evo mkt-pts "${@:2}"
+  ;;
+  rvn)
+    evo mkt-rvn "${@:2}"
+  ;;
+  *) evo help mkt
+esac
+	
+set -e

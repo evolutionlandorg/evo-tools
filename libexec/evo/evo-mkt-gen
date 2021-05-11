@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+### evo-mkt-gen -- Market Genesis Holder Management
+### Usage: evo mkt-gen [<command>]
+###
+### Commands: op                                                                        Operator
+###           auc    <token-id> <start-price> <end-price> <duration> <start-at> <token> CreateAuction
+###           cancel <token-id>                                                         CancelAuction
+###           setOp  <operator>                                                         SetOperator
+###
+### Example:  evo mkt-gen op  
+###           evo mkt-gen cancel @land 
+
+set -e
+
+gen="${GENESISHOLDER_PROXY?}" 
+
+case $1 in
+  op)
+    sig="operator()(address)"
+    seth call "$gen" "$sig" 
+  ;;
+  auc)
+    sig="createAuction(uint256,uint256,uint256,uint256,uint256,address)"
+    seth send "$gen" "$sig" "${@:2}"
+  ;;
+  cancel)
+    sig="cancelAuction(uint256)"
+    seth send "$gen" "$sig" "${@:2}"
+  ;;
+  setOp)
+    sig="setOperator(address)"
+    seth send "$gen" "$sig" "${@:2}"
+  ;;
+  *) evo help mkt-gen
+esac

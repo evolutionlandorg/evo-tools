@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+### evo-fnc-fml -- Furnace fml Management
+### Usage: evo fnc-fml [<command>]
+###
+### Commands: insert      <params>  Formula insert
+###           at          <params>  Formula at
+###           disable     <params>  Formula disable
+###           get-disable <params>  Formula isDisable
+###           get-minor   <params>  Formula getMinor
+###           get-major   <params>  Formula getMajorInfo 
+###           get-meta    <params>  Formula getMetaInfo 
+###           can-dis     <params>  Formula canDisenchant 
+###           enable      <index>   Formula enable 
+###           set-amount  <index>   Formula setAmount 
+###           set-rate    <index>   Formula setStrengthRate 
+###           length      <index>   Formula length
+###
+### Example:  evo fnc-fml at 0 
+
+set -e
+
+fml="$(evo --addr-of "CONTRACT_fml")" 
+
+case $1 in
+  insert)
+    seth send $fml "insert(bytes32,uint128,uint16,uint16,uint16,bool,bytes32,uint256,address,uint16,uint16,uint16)" "${@:2}"
+  ;;
+  at)
+    seth call $fml "formulas(uint256)(bytes32,uint128,uint16,uint16,uint16,bool,bool,bytes32,uint256,address,uint16,uint16,uint16)" $(seth --to-uint256 $2)
+  ;;
+  get-disable)
+    seth call $fml "isDisable(uint256)(bool)" "${@:2}"
+  ;;
+  get-minor)
+    seth call $fml "getMinor(uint256)(bytes32,uint256)" "${@:2}"
+  ;;
+  get-major)
+    seth call $fml "getMajorInfo(uint256)(address,uint16,uint16,uint16)" "${@:2}"
+  ;;
+  get-meta)
+    seth call $fml "getMetaInfo(uint256)(uint16,uint16,uint16,uint128)" "${@:2}"
+  ;;
+  can-dis)
+    seth call $fml "canDisenchant(uint256)(bool)" "${@:2}"
+  ;;
+  disable)
+    seth send $fml "disable(uint256)" "${@:2}"
+  ;;
+  enable)
+    seth send $fml "enable(uint256)" "${@:2}"
+  ;;
+  set-amount)
+    seth send $fml "setAmount(uint256,uint256)" "${@:2}"
+  ;;
+  set-rate)
+    seth send $fml "setStrengthRate(uint256,uint128)" "${@:2}"
+  ;;
+  length)
+    seth call $fml "length()(uint256)" "${@:2}"
+  ;;
+     *) fnc help fml;    ;;
+esac

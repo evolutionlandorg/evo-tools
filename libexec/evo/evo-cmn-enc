@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-### evo-cmn-enc -- Common Encoder management
+### evo-cmn-enc -- Common Encoder Management
 ### Usage: evo cmn-enc [<command>]
 ###
 ### Commands: chainId             Get Chain Id

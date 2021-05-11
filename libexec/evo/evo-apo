@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+### evo-apo -- Apostle Management
+### Usage: evo apo [<command>]
+###
+### Commands: apo bas ApostleBase management
+###           apo auc ApostleClockAuction management
+###           apo gen Gen0Apostle management
+###           apo sir SiringClockAuction management
+###
+### Example:  evo apo strength @apostle @gold @land 
+###           evo auc claim @apostle
+
+set -e
+
+case $1 in
+  bas)
+    evo apo-bas "${@:2}"
+  ;;
+  auc)
+    evo apo-auc "${@:2}"
+  ;;
+  gen)
+    evo apo-gen "${@:2}"
+  ;;
+  sir)
+    evo apo-sir "${@:2}"
+  ;;
+  *) evo help apo
+esac
+	
+set -e

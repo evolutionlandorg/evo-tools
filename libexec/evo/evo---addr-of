@@ -2,4 +2,4 @@
 ### evo---addr-of -- Get address of id
 ### Usage: seth --addr-of <id>...
 set -e
-evo cmn-reg addressOf "${1?}"
+evo cmn-reg addrOf "${1?}"

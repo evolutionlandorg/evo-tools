@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-### evo-cmn-pts -- Common Points management
+### evo-cmn-pts -- Common Points Management
 ### Usage: evo cmn-pts [<command>]
 ###
 ### Commands: balance <user>         PointsBalanceOf

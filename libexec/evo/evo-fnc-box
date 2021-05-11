@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+### evo-fnc-box -- Furnace Drill Lucky Box Management
+### Usage: evo fnc-box [<command>]
+###
+### Commands: wallet                           Wallet
+###           begin                            PriceIncreaseBeginTime
+###           setBegin                         SetBeginTime
+###           price                            GetPrice 
+###           buy      <value> <gold> <silver> Buy box 
+###
+### Example:  evo fnc-box wallet 
+
+set -e
+
+box="${DRILLLUCKYBOX?}" 
+
+case $1 in
+  wallet)
+    sig="wallet()(address)"
+    seth call "$box" "$sig" 
+  ;;
+  begin)
+    sig="priceIncreaseBeginTime()(uint256)"
+    seth call "$box" "$sig" 
+  ;;
+  price)
+    sig="getPrice()(uint256,uint256)"
+    prices=$(seth call "$box" "$sig")
+    gold=$(echo $prices | cut -d' ' -f 1)
+    silver=$(echo $prices | cut -d' ' -f 2)
+    p "gold" "$gold"
+    p "silver" "$silver"
+  ;;
+  buy)
+    sig="transfer(address,uint256,bytes)"
+    amount=$(seth --to-uint256 $(seth --to-wei ${2?} ether))
+    goldBox=$(seth --to-uint256 ${3?})
+    silverBox=$(seth --to-uint256 ${4?})
+    data=$goldBox${silverBox:2}
+    ring="$(evo --addr-of "CONTRACT_RING_ERC20_TOKEN")" 
+    seth send "$ring" "$sig" "$box" "$amount" "$data"
+  ;;
+  setBegin)
+    sig="setBeginTime(uint256)"
+    seth send "$box" "$sig" "${@:2}"
+  ;;
+  *) evo help fnc-box
+esac

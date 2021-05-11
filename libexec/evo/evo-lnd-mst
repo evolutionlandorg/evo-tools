@@ -1,5 +1,5 @@
 #!/usr/bin/env bash 
-### evo-lnd-mst -- Land mstource management
+### evo-lnd-mst -- Land MysteriousTreasure Management
 ### Usage: evo lnd-mst [<command>]
 ###
 ### Commands: rsp      <uint256>   ResourcePool 

@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+### evo-mkt-tk2 -- Market TakeBack Management
+### Usage: evo mkt-tk2 [<command>]
+###
+### Commands: sup                                                                Supervisor
+###           net                                                                NetworkId
+###           u2n    <user>                                                      UserToNonce
+###           take   <nonce> <token-id> <token-addr> <expire> <hash> <v> <r> <s> TakeBack
+###           verify <hash>  <v>     <r>    <s>                                  Verify
+###           setSup <sup>                                                       ChangeSupervisor
+###
+### Example:  evo mkt-tk2 settle 
+
+set -e
+
+tk2="${TAKEBACKNFT?}" 
+
+case $1 in
+  sup)
+    sig="supervisor()(address)"
+    seth call "$tk2" "$sig"
+  ;;
+  net)
+    sig="networkId()(uint256)"
+    seth call "$tk2" "$sig"
+  ;;
+  u2n)
+    sig="userToNonce(address)(uint256)"
+    seth call "$tk2" "$sig" "${2?}"
+  ;;
+  verify)
+    sig="verify(bytes32,uint8,bytes32,bytes32)(address)"
+    seth call "$tk2" "$sig" "${@:2}"
+  ;;
+  take)
+    sig="takeBackNFT(uint256,uint256,address,uint256,bytes32,uint8,bytes32,bytes32)"
+    seth send "$tk2" "$sig" "${@:2}"
+  ;;
+  setSup)
+    sig="changeSupervisor(address)"
+    seth send "$tk2" "$sig" "${@:2}"
+  ;;
+  *) evo help mkt-tk2
+esac

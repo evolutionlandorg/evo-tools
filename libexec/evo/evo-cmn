@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-### evo-cmn -- Common management
+### evo-cmn -- Common Management
 ### Usage: evo cmn [<command>]
 ###
 ### Commands: cmn reg SettingsRegistry management

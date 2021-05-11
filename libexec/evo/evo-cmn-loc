@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-### evo-cmn-loc -- Common Location management
+### evo-cmn-loc -- Common Location Management
 ### Usage: evo cmn-loc [<command>]
 ###
 ### Commands: has   <token-id>         Hasloc

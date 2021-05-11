@@ -1,5 +1,5 @@
 #!/usr/bin/env bash 
-### evo-lnd-res -- Land Resource management
+### evo-lnd-res -- Land Resource Management
 ### Usage: evo lnd-res [<command>]
 ###
 ### Commands: mms                                            MaxMiners 

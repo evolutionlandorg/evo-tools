@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+### evo-mkt-pts -- Market Points Reward Pool Management
+### Usage: evo mkt-pts [<command>]
+###
+### Commands: small              PlayWithSmallTicket
+###           large              PlayWithLargeTicket
+###           total <token-addr> TotalRewardInPool
+###
+### Example:  evo mkt-pts small 
+###           evo mkt-pts large
+
+set -e
+
+pts="$(evo --addr-of "CONTRACT_POINTS_REWARD_POOL")" 
+
+case $1 in
+  small)
+    sig="playWithSmallTicket()"
+    seth send "$pts" "$sig" 
+  ;;
+  large)
+    sig="playWithLargeTicket()"
+    seth send "$pts" "$sig" "${@:2}"
+  ;;
+  total)
+    sig="totalRewardInPool(address)(uint256)"
+    seth --to-fix 18 $(seth call "$pts" "$sig" "${@:2}")
+  ;;
+  *) evo help mkt-pts
+esac

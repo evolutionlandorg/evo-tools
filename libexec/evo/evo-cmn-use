@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-### evo-cmn-tokenuse -- Common Ownership management
+### evo-cmn-tokenuse -- Common Ownership Management
 ### Usage: evo cmn-tokenuse [<command>]
 ###
 ### Commands: i2s    <token-id>                               TokenId2UseStatus

@@ -1,0 +1,48 @@
+#!/usr/bin/env bash 
+### evo-mkt-auc -- Market Land Auction Management
+### Usage: evo mkt-auc [<command>]
+###
+### Commands: i2a    <token-id>                                                         TokenIdToAuction
+###           new    <token-id> <start-price> <end-price> <duration> <start-at> <token> CreateAuction
+###           cancel <token-id>                                                         CancelAuction
+###           claim  <token-id>                                                         ClaimLandAsset
+###           price  <token-id>                                                         GetCurrentPriceInToken
+###
+### Example:  evo mkt-auc i2a @mktstle 
+###           evo mkt-auc price @mktstle
+
+set -e
+
+auc="$(evo --addr-of "CONTRACT_CLOCK_AUCTION")" 
+
+p() { printf "%-15s %-52s \n" "$1" "$2"; }
+
+case $1 in
+  i2a)
+    sig="tokenIdToAuction(uint256)(address,uint48,uint48,uint128,uint128,address,uint128,address,uint48,address)"
+    keys=("seller" "startAt" "duration" "startingPriceInToken" "endingPriceInToken" "token" "lastRecord" "lastBidder" "lastBidStartAt" "lastReferer")
+    auction=$(seth call "$auc" "$sig" "${2?}")
+    for i in "${!keys[@]}"; do
+      ((idx="$i"+1))
+      value=$(echo $auction | cut -d' ' -f "$idx") 
+      p "${keys[i]}" "$value"
+    done
+  ;;
+  new)
+    sig="createAuction(uint256,uint256,uint256,uint256,uint256,address)"
+    seth send "$auc" "$sig" "${@:2}"
+  ;;
+  cancel)
+    sig="cancelAuction(uint256)"
+    seth send "$auc" "$sig" "${@:2}"
+  ;;
+  claim)
+    sig="claimLandAsset(uint)"
+    seth send "$auc" "$sig" "${@:2}"
+  ;;
+  price)
+    sig="getCurrentPriceInToken(uint256)(uint256)"
+    seth --to-fix 18 $(seth send "$auc" "$sig" "${@:2}")
+  ;;
+  *) evo help mkt-auc
+esac

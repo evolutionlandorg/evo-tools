@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+### evo-mkt-rvn -- Market Revenue Pool Management
+### Usage: evo mkt-rvn [<command>]
+###
+### Commands: settle <token-addr>             SettleToken
+###
+### Example:  evo mkt-rvn settle 
+
+set -e
+
+rvn="$(evo --addr-of "CONTRACT_REVENUE_POOL")" 
+
+case $1 in
+  settle)
+    sig="settleToken(address)"
+    seth send "$rvn" "$sig" "${2?}"
+  ;;
+  *) evo help mkt-rvn
+esac
