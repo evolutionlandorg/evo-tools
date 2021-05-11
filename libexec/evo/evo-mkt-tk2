@@ -6,7 +6,7 @@
 ###           net                                                                NetworkId
 ###           u2n    <user>                                                      UserToNonce
 ###           take   <nonce> <token-id> <token-addr> <expire> <hash> <v> <r> <s> TakeBack
-###           verify <hash>  <v>     <r>    <s>                                  Verify
+###           verify <hash>  <v>        <r>          <s>                         Verify
 ###           setSup <sup>                                                       ChangeSupervisor
 ###
 ### Example:  evo mkt-tk2 settle 
