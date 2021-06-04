@@ -48,7 +48,7 @@ case $1 in
     seth call "$enc" "$sig" "${2?}"
   ;;
   prdId)
-    sig="getProducerId(uint256)(uin16)"
+    sig="getProducerId(uint256)(uint16)"
     seth call "$enc" "$sig" "${2?}"
   ;;
   cttAddr)

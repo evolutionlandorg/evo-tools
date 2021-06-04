@@ -15,7 +15,7 @@ set -e
 
 auc="$(evo --addr-of "CONTRACT_CLOCK_AUCTION")" 
 
-p() { printf "%-15s %-52s \n" "$1" "$2"; }
+p() { printf "%-21s %-52s \n" "$1" "$2"; }
 
 case $1 in
   i2a)
@@ -42,7 +42,7 @@ case $1 in
   ;;
   price)
     sig="getCurrentPriceInToken(uint256)(uint256)"
-    seth --to-fix 18 $(seth send "$auc" "$sig" "${@:2}")
+    seth --to-fix 18 $(seth call "$auc" "$sig" "${@:2}")
   ;;
   *) evo help mkt-auc
 esac

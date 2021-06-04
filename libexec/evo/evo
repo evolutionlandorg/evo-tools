@@ -92,6 +92,10 @@ evo-init() {
         config-init "${0%/*}/conf/hecotest.json";
         chain-verify "256"
         ;;
+      heco)
+        config-init "${0%/*}/conf/heco.json";
+        chain-verify "128"
+        ;;
       bsctest)
         config-init "${0%/*}/conf/bsctest.json";
         chain-verify "97"
