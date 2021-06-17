@@ -19,7 +19,7 @@ case $1 in
   ;;
   supply)
     sig="pointsSupply()(uint256)"
-    seth --to-fix 18 $(seth call "$pts" "$sig" "${2?}")
+    seth --to-fix 18 $(seth call "$pts" "$sig")
   ;;
   *) evo help cmn-pts
 esac

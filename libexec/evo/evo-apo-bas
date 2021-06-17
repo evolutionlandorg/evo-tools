@@ -4,6 +4,7 @@
 ###
 ### Commands: oid                                                              LastApostleObjectId
 ###           i2a      <token-id>                                              TokenId2Apostle
+###           tal      <talents>                                               ParseTalent
 ###           s2a      <token-id> <x>        <y>                               SireAllowedToAddress
 ###           new      <m-id>     <s-id>     <gen>     <gene> <talent> <owner> CreateApostle
 ###           cool     <token-id>                                              GetCooldownDuration
@@ -39,6 +40,10 @@ case $1 in
       value=$(echo $apostle | cut -d' ' -f "$idx") 
       p "${keys[i]}" "$value"
     done
+  ;;
+  tal)
+    # apostle_talent.go
+    # GenerateTalents.py
   ;;
   s2a)
     sig="sireAllowedToAddress(uint256)(address)"

@@ -2,18 +2,19 @@
 ### evo-cmn-enc -- Common Encoder Management
 ### Usage: evo cmn-enc [<command>]
 ###
-### Commands: chainId             Get Chain Id
-###           landId              Get Land Id
-###           o2a     <uint8>     OwnershipId2Address
-###           a2o     <address>   OwnershipAddress2Id
-###           a2i     <address>   ClassAddress2Id
-###           i2a     <uint8>     ClassId2Address
-###           prdId   <token-id>  Get Producer Id
-###           cttAddr <token-id>  Get Contract Address
-###           objId   <token-id>  Get Object Id
-###           objCls  <token-id>  Get Object Class
-###           objAddr <token-id>  Get Object Address
-###           orgAddr <token-id>  Get Origin Address
+### Commands: chainId                      Get Chain Id
+###           landId                       Get Land Id
+###           enc     <obj-class> <obj-id> EncodeTokenIdByOwnerShip 
+###           o2a     <uint8>              OwnershipId2Address
+###           a2o     <address>            OwnershipAddress2Id
+###           a2i     <address>            ClassAddress2Id
+###           i2a     <uint8>              ClassId2Address
+###           prdId   <token-id>           Get Producer Id
+###           cttAddr <token-id>           Get Contract Address
+###           objId   <token-id>           Get Object Id
+###           objCls  <token-id>           Get Object Class
+###           objAddr <token-id>           Get Object Address
+###           orgAddr <token-id>           Get Origin Address
 ###
 ### Example:  evo cmn-enc chainId 
 ###           evo cmn-enc landId 
@@ -30,6 +31,11 @@ case $1 in
   landId)
     sig="CURRENT_LAND()(uint256)"
     seth call "$enc" "$sig"   
+  ;;
+  enc)
+    sig="encodeTokenId(address,uint8,uint128)"
+    ownership="$(evo --addr-of "CONTRACT_OBJECT_OWNERSHIP")" 
+    seth call "$enc" "$sig" "$ownership" "${@:2}"  
   ;;
   o2a)
     sig="ownershipId2Address(uint8)(address)"
