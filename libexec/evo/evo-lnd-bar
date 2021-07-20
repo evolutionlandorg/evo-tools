@@ -37,7 +37,7 @@ case $1 in
     seth call "$bar" "$sig" 
   ;;
   l2b)
-    sig="landId2Bars(uint256,uint256)(address,address,uint256,address)"
+    sig="landId2Bars(uint256,uint256)(address,address,bytes32,address)"
     landBar=$(seth call "$bar" "$sig" "${@:2}")
     staker=$(echo $landBar | cut -d' ' -f 1)
     token=$(echo $landBar | cut -d' ' -f 2)
@@ -49,7 +49,7 @@ case $1 in
     p "resource" "$resource"
   ;;
   i2s)
-    sig="itemId2Status(address,uint256)(address,uint256,uint256)"
+    sig="itemId2Status(address,uint256)(address,bytes32,uint256)"
     stat=$(seth call "$bar" "$sig" "${@:2}")
     staker=$(echo $stat | cut -d' ' -f 1)
     tokenId=$(echo $stat | cut -d' ' -f 2)
@@ -99,7 +99,7 @@ case $1 in
     seth call "$bar" "$sig" "${@:2}"
   ;;
   protected)
-    sig="isNotProtect(address,uint256)(uint256[])"
+    sig="isNotProtect(address,uint256)(bool)"
     seth call "$bar" "$sig" "${@:2}"
   ;;
   *) evo help land-bar 
