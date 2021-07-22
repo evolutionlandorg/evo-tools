@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+### evo-obj -- Object Management
+### Usage: evo obj [<command>]
+###
+### Commands: cmn obj ls All object list 
+###
+### Example:  evo obj ls
+
+set -e
+
+from=${ETH_FROM?}
+
+p() { printf "%-8s %-15s %-66s\n" "$1" "$2" "$3"; }
+
+declare -A classMap=(
+["1"]="⛰  Land"
+["2"]="👨 Apostle"
+["3"]="👾 Pet"
+["4"]="⛏  Drill"
+["5"]="🛠  Item"
+)
+
+case $1 in
+  ls)
+    count=$(evo cmn-tkn balance "$from")
+    if test "$count" == 0; then
+      echo "$from has no evo object."
+      exit 1;
+    fi
+    echo "Count $count"
+    p "Index"  "Class" "TokenId"
+    for i in $(seq 0 $(( ${count} - 1 ))); do
+      id=$(seth --to-word $(evo cmn-tkn index "$from" "$i"))
+      class=$(( 16#${id:16:2} ))
+      p "$i"  "${classMap[$class]}" "$id"
+    done
+  ;;
+  *) evo help obj
+esac
+	
+set -e

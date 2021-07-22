@@ -31,7 +31,7 @@ case $1 in
     p "y" "$x"
   ;;
   setHM)
-    sig="setTokenLocationHMHM(uint256,int,int)"
+    sig="setTokenLocationHM(uint256,int,int)"
     seth send "$loc" "$sig" "${@:2}"
   ;;
   get)

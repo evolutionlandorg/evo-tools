@@ -23,6 +23,10 @@ case $1 in
     sig="balanceOf(address)(uint256)"
     seth call "$ownership" "$sig" "${2?}"
   ;;
+  index)
+    sig="tokenOfOwnerByIndex(address,uint256)(uint256)"
+    seth call "$ownership" "$sig" "${@:2}"
+  ;;
   owner)
     sig="ownerOf(uint256)(address)"
     seth call "$ownership" "$sig" "${2?}"

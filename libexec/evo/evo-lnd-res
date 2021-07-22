@@ -17,6 +17,7 @@
 ###           land          <miner-id>                       LandWorkingOn
 ###           claim         <land-id>                        ClaimLandResource
 ###           ava           <land-id>  <res-addr[]>          AvailableLandResources
+###           time          <land-id>                        ResourceReleaseStartTime
 ###
 ### Example:  evo lnd res mms
 ###           evo lnd res m2i @apostle
@@ -66,6 +67,21 @@ case $1 in
     sig="getReleaseSpeed(uint256,address,uint256)"
     seth call "$res" "$sig" "${@:2}"
   ;;
+  speed)
+    id=${2?}
+    currentTime=$(seth --to-uint256 $(date '+%s'))
+    sig="getReleaseSpeed(uint256,address,uint256)(uint256)"
+    gold="$(evo --addr-of "CONTRACT_GOLD_ERC20_TOKEN")" 
+    wood="$(evo --addr-of "CONTRACT_WOOD_ERC20_TOKEN")" 
+    water="$(evo --addr-of "CONTRACT_WATER_ERC20_TOKEN")" 
+    fire="$(evo --addr-of "CONTRACT_FIRE_ERC20_TOKEN")" 
+    soil="$(evo --addr-of "CONTRACT_SOIL_ERC20_TOKEN")" 
+    seth call "$res" "$sig" "$id" "$gold" "$currentTime"
+    seth call "$res" "$sig" "$id" "$wood" "$currentTime"
+    seth call "$res" "$sig" "$id" "$water" "$currentTime"
+    seth call "$res" "$sig" "$id" "$fire" "$currentTime"
+    seth call "$res" "$sig" "$id" "$soil" "$currentTime"
+  ;;
   mine)
     sig="mine(uint256)"
     seth send "$res" "$sig" "${@:2}"
@@ -92,7 +108,10 @@ case $1 in
   ;;
   miner)
     sig="getMinerOnLand(uint256,address,uint256)(uint256)"
-    seth call "$res" "$sig" "${@:2}"
+    for i in {0..4}; do
+      index=$(seth --to-uint256 $i)
+      seth call "$res" "$sig" $2 $3 $index
+    done
   ;;
   land)
     sig="landWorkingOn(uint256)(uint256)"
@@ -104,6 +123,10 @@ case $1 in
   ;;
   ava)
     sig="availableLandResources(uint256,address[])(uint256[])"
+    seth call "$res" "$sig" "${@:2}"
+  ;;
+  time)
+    sig="resourceReleaseStartTime()(uint256)"
     seth call "$res" "$sig" "${@:2}"
   ;;
   *) evo help land-res 

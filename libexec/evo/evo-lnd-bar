@@ -58,6 +58,10 @@ case $1 in
     p "tokenId" "$tokenId"
     p "index" "$index"
   ;;
+  item)
+    sig="getLandIdByItem(address,uint256)(address,bytes32)"
+    seth call "$bar" "$sig" "${@:2}"
+  ;;
   i2p)
     sig="protectPeriod(address,uint256)(uint256)"
     seth call "$bar" "$sig" "${@:2}"
@@ -68,11 +72,11 @@ case $1 in
   ;;
   strength)
     sig="getBarMiningStrength(uint256,address,uint256)(uint256)"
-    seth call "$bar" "$sig" "${@:2}"
+    seth --to-fix 18 $(seth call "$bar" "$sig" "${@:2}")
   ;;
   totalStrength)
     sig="getBarsMiningStrength(uint256,address)(uint256)"
-    seth call "$bar" "$sig" "${@:2}"
+    seth --to-fix 18 $(seth call "$bar" "$sig" "${@:2}")
   ;;
   rate)
     sig="getBarRate(uint256,address,uint256)(uint256)"

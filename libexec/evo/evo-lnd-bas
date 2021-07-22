@@ -22,7 +22,7 @@
 ###           rsv     <token-id>                                   IsReserved
 ###           spc     <token-id>                                   IsSpecial
 ###           setBox  <token-id> <bool>                            SetHasBox
-###           rra     <token-id> <bool>                            GetResourceRateAttr
+###           rra     <token-id>                                   GetResourceRateAttr
 ###           setRRA  <token-id> <attr-id>                         SetResourceRateAttr
 ###           mask    <token-id>                                   GetFlagMask
 ###           setMask <token-id> <mask>                            SetFlagMask
@@ -36,7 +36,7 @@ set -e
 
 bas="$(evo --addr-of "CONTRACT_LAND_BASE")" 
 
-p() { printf "%-12s %-52s \n" "$1" "$2"; }
+p() { printf "%-8s %-9s %-15s\n" "$1" "$2" "$3"; }
 
 case $1 in
   xLow)
@@ -64,7 +64,7 @@ case $1 in
     attr=$(seth call "$bas" "$sig" "${2?}")
     resourceRateAttr=$(echo $attr | cut -d' ' -f 1)
     mask=$(echo $attr | cut -d' ' -f 2)
-    p "resourceRateAttr" "$resourceRateAttr"
+    p "resourceRateAttr" "$resourceRateAttr" 
     p "mask" "$mask"
   ;;
   l2i)
@@ -126,6 +126,33 @@ case $1 in
   rate)
     sig="getResourceRate(uint,address)(uint16)"
     seth call "$bas" "$sig" "${@:2}"
+  ;;
+  rra)
+    sig="getResourceRateAttr(uint256)"
+    attr=$(seth call "$bas" "$sig" "$2")
+    startTime=$(evo lnd-res time)
+    currentTime=$(date '+%s')
+    num=$(((currentTime - startTime) / 86400))
+    p "Resource" "Start" "Current"
+    gold_rate=$(seth --to-dec ${attr:62:4})
+    gold_crate=$(bc <<< "$gold_rate - $gold_rate * 0.0001 * $num")
+    p "gold"   "$gold_rate" "$gold_crate"
+    wood_rate=$(seth --to-dec ${attr:58:4})
+    wood_crate=$(bc <<< "$wood_rate - $wood_rate * 0.0001 * $num")
+    p "wood"   "$wood_rate" "$wood_crate"
+    water_rate=$(seth --to-dec ${attr:54:4})
+    water_crate=$(bc <<< "$water_rate - $water_rate * 0.0001 * $num")
+    p "water" "$water_rate" "$water_crate"
+    fire_rate=$(seth --to-dec ${attr:50:4})
+    fire_crate=$(bc <<< "$fire_rate - $fire_rate * 0.0001 * $num")
+    p "fire"   "$fire_rate" "$fire_crate"
+    soil_rate=$(seth --to-dec ${attr:46:4})
+    soil_crate=$(bc <<< "$soil_rate - $soil_rate * 0.0001 * $num")
+    p "soil"   "$soil_rate" "$soil_crate"
+  ;;
+  mask)
+    sig="getFlagMask(uint)(uint)"
+    seth call "$bas" "$sig" "$2"
   ;;
   setRate)
     sig="setResourceRate(uint,address,uint16)"

@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+### evo-obj -- Object Status Management
+### Usage: evo sts [<command>]
+###
+### Commands: cmn sts land <id> Land object status
+###
+### Example:  evo sts land
+
+set -e
+
+p() { printf "%-11s %-11s\n" "$1" "$2"; }
+p2() { printf "%-11s %-42s %-66s\n" "$1" "$2" "$3"; }
+p3() { printf "%-11s %-22s %-22s %-22s\n" "$1" "$2" "$3" "$4"; }
+
+case $1 in
+  land)
+    id=$(seth --to-word ${2?})
+    class=$(( 16#${id:16:2} ))
+    if test "$class" != 1; then
+      echo "The token id is not land."
+      exit 1;
+    fi
+    mask=$(evo lnd-bas mask "$id")
+    echo "########## Mask ##############"
+    p "is_reserved" "$((${mask} & 1))" 
+    # p "is_reserved" $(evo lnd-bas rsv "$id") 
+    p "is_special" "$((${mask} & 2))" 
+    # p "is_special" $(evo lnd-bas spc "$id") 
+    p "has_box" "$((${mask} & 4))" 
+    # p "has_box" $(evo lnd-bas box "$id") 
+    echo "######## Locatoin ############"
+    evo cmn-loc getHM $id
+    # evo cmn-loc get $id
+    echo "########## Rate ##############"
+    evo lnd-bas rra $id
+    # evo lnd-res speed $id
+    echo "########## Miner #############"
+    declare -A tokens=(
+    ["Gold"]="$(evo --addr-of "CONTRACT_GOLD_ERC20_TOKEN")" 
+    ["Wood"]="$(evo --addr-of "CONTRACT_WOOD_ERC20_TOKEN")" 
+    ["Water"]="$(evo --addr-of "CONTRACT_WATER_ERC20_TOKEN")" 
+    ["Fire"]="$(evo --addr-of "CONTRACT_FIRE_ERC20_TOKEN")" 
+    ["Soil"]="$(evo --addr-of "CONTRACT_SOIL_ERC20_TOKEN")" 
+    )
+    evo lnd-res l2s "$id"
+    # for token in "${tokens[@]}"; do
+    #   evo lnd-res miner "$id" "$token"
+    # done
+    echo "########## Item ##############"
+    p2 "Index" "Staker" "ItemId"
+    for i in {0..4};do
+      item="$(evo lnd-bar item $id $i)"  
+      staker=${item:0:42}
+      itemId=${item:43:66}
+      p2 "$i" "$staker" "$itemId"
+    done
+    echo "######## Stength #############"
+    p3 "Resource" "Land" "Item" "Total"
+    for key in ${!tokens[*]};do
+      token=${tokens[$key]}
+      l="$(evo lnd-res strength $id $token)"
+      i="$(evo lnd-bar totalStrength $id $token)"
+      p3 "$key" "$l" "$i" "$(bc <<< "$l + $i")" 
+    done
+  ;;
+  *) evo help obj
+esac
+	
+set -e
