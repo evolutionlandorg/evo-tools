@@ -51,12 +51,22 @@ lucky_add=$(( 16#${talents:18:2} ))
 potential_add=$(( 16#${talents:16:2} ))
 charm_add=$(( 16#${talents:14:2} ))
 
+strength=$(($strength + $strength_add))
+agility=$(($agility + $aligity_add))
+intellect=$(($intellect + $intellect_add))
+life=$(($life + $life_add))
+hp=$(($hp + $hp_add))
+mood=$(($mood + $mood_add))
+finesse=$(($finesse + $finesse_add))
+lucky=$(($lucky + $lucky_add))
+potential=$(($potential + $potential_add))
+
 echo "####### Talent ##########"
-p "LIFE" "$(($life+life_add))($life_add)" "MOOD" "$(($mood+$mood_add))($mood_add)"
-p "STR" "$(($strength+strength_add))($strength_add)" "AGI" "$(($agility+$agility_add))($agility_add)"
-p "DEX" "$(($finesse+finesse_add))($finesse_add)" "HP" "$(($hp+$hp_add))($hp_add)"
-p "INT" "$(($intellect+intellect_add))($intellect_add)" "LUK" "$(($lucky+$lucky_add))($lucky_add)"
-p "POT" "$(($potential+potential_add))($potential_add)" "CHA" "$(($charm+$charm_add))($charm_add)"
+p "LIFE" "$(($life))($life_add)" "MOOD" "$(($mood))($mood_add)"
+p "STR" "$(($strength))($strength_add)" "AGI" "$(($agility))($agility_add)"
+p "DEX" "$(($finesse))($finesse_add)" "HP" "$(($hp))($hp_add)"
+p "INT" "$(($intellect))($intellect_add)" "LUK" "$(($lucky))($lucky_add)"
+p "POT" "$(($potential))($potential_add)" "CHA" "$(($charm))($charm_add)"
 
 echo "####### Prefer ##########"
 p2 "GOLD" "WOOD" "HOO" "FIRE" "SIOO" 

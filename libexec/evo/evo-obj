@@ -10,14 +10,14 @@ set -e
 
 from=${ETH_FROM?}
 
-p() { printf "%-8s %-15s %-66s\n" "$1" "$2" "$3"; }
+p() { printf "%-5s %-10s %-5s %-66s\n" "$1" "$2" "$3" "$4"; }
 
 declare -A classMap=(
-["1"]="⛰  Land"
+["1"]="⛰  Land   "
 ["2"]="👨 Apostle"
-["3"]="👾 Pet"
-["4"]="⛏  Drill"
-["5"]="🛠  Item"
+["3"]="👾 Pet    "
+["4"]="⛏  Drill  "
+["5"]="🔨 Item   "
 )
 
 case $1 in
@@ -28,11 +28,20 @@ case $1 in
       exit 1;
     fi
     echo "Count $count"
-    p "Index"  "Class" "TokenId"
+
+    echo "Index Class      Level TokenId" 
     for i in $(seq 0 $(( ${count} - 1 ))); do
       id=$(seth --to-word $(evo cmn-tkn index "$from" "$i"))
       class=$(( 16#${id:16:2} ))
-      p "$i"  "${classMap[$class]}" "$id"
+      level=
+      if test "$class" == 1; then
+        level=$(evo gen level $id)
+      elif test "$class" == 2; then
+        level=$(bc <<< "scale=2;$(evo apo-bas level $id) * 10 / 10")
+      elif test "$class" == 4 -o "$class" == 5; then
+        level=$(( 16#${id:36:2} ))
+      fi 
+      p "$i" "${classMap[$class]}" "$level" "$id" 
     done
   ;;
   *) evo help obj

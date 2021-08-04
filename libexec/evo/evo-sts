@@ -16,7 +16,7 @@ case $1 in
   apo)
     evo sts-apo "${@:2}"
   ;;
-  *) evo help obj
+  *) evo help sts
 esac
 	
 set -e

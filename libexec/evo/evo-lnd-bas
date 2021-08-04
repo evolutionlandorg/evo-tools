@@ -149,6 +149,9 @@ case $1 in
     soil_rate=$(seth --to-dec ${attr:46:4})
     soil_crate=$(bc <<< "$soil_rate - $soil_rate * 0.0001 * $num")
     p "soil"   "$soil_rate" "$soil_crate"
+    total=$(($gold_rate + $wood_rate + $water_rate + $fire_rate + $soil_rate))
+    echo --------------------------------
+    p "LEVEL" "$(($total/60 + $total/100))" 
   ;;
   mask)
     sig="getFlagMask(uint)(uint)"

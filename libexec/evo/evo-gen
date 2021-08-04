@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+### evo-gen -- EVO GeneScience Management
+### Usage: evo sts [<command>]
+###
+### Commands: cmn gen level <id> Land level
+###
+### Example:  evo gen lnd @id
+
+set -e
+
+gen="$(evo --addr-of "CONTRACT_GENE_SCIENCE")" 
+
+case $1 in
+  level)
+    sig="getLandLevel(uint256)(uint256)"
+    seth call "$gen" "$sig" "${2?}"
+  ;;
+  *) evo help gen
+esac
+	
+set -e

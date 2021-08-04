@@ -45,6 +45,22 @@ case $1 in
     sig="getApostleInfo(uint256)(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256)"
     seth call "$bas" "$sig" "${2?}"
   ;;
+  level)
+    info=$(evo apo-bas info "${2?}")
+    talents=$(seth --to-uint256 $(echo $info | cut -d' ' -f 2))
+    strength=$(( 16#${talents:64:2} ))
+    agility=$(( 16#${talents:62:2} ))
+    potential=$(( 16#${talents:48:2} ))
+    strength_add=$(( 16#${talents:32:2} ))
+    agility_add=$(( 16#${talents:30:2} ))
+    potential_add=$(( 16#${talents:16:2} ))
+
+    strength=$(($strength + $strength_add))
+    agility=$(($agility + $agility_add))
+    potential=$(($potential + $potential_add))
+    level=$(bc <<< "$strength * $agility * 1000000000000000000 / ((7 + $potential / 100) * $potential)")
+    seth --to-fix 18 $level 
+  ;;
   tal)
     # apostle_talent.go
     # GenerateTalents.py
