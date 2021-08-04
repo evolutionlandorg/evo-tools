@@ -52,7 +52,7 @@ potential_add=$(( 16#${talents:16:2} ))
 charm_add=$(( 16#${talents:14:2} ))
 
 strength=$(($strength + $strength_add))
-agility=$(($agility + $aligity_add))
+agility=$(($agility + $agility_add))
 intellect=$(($intellect + $intellect_add))
 life=$(($life + $life_add))
 hp=$(($hp + $hp_add))
