@@ -68,7 +68,7 @@ p "DEX" "$(($finesse))($finesse_add)" "HP" "$(($hp))($hp_add)"
 p "INT" "$(($intellect))($intellect_add)" "LUK" "$(($lucky))($lucky_add)"
 p "POT" "$(($potential))($potential_add)" "CHA" "$(($charm))($charm_add)"
 
-echo "####### Prefer ##########"
+echo "######### Prefer ###########"
 p2 "GOLD" "WOOD" "HOO" "FIRE" "SIOO" 
 p2 "Lv.$prefer_gold" "Lv.$prefer_wood" "Lv.$prefer_water" "Lv.$prefer_fire" "Lv.$prefer_sioo"
 
