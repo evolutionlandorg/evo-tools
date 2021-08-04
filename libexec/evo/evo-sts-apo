@@ -8,9 +8,8 @@
 
 set -e
 
-p() { printf "%-5s %-5s   %-5s %-5s\n" "$1" "$2" $3 $4; }
-p2() { printf "%-11s %-42s %-66s\n" "$1" "$2" "$3"; }
-p3() { printf "%-11s %-22s %-22s %-22s\n" "$1" "$2" "$3" "$4"; }
+p() { printf "%-5s %-5s   %-5s %-5s\n" "$1" "$2" "$3" "$4"; }
+p2() { printf "%-5s %-5s %-5s %-5s %-5s\n" "$1" "$2" "$3" "$4" "$5"; }
 
 id=$(seth --to-word ${1?})
 class=$(( 16#${id:16:2} ))
@@ -33,6 +32,12 @@ potential=$(( 16#${talents:48:2} ))
 
 prefer=$(( 16#${talents:44:4} ))
 
+prefer_gold=$(( ($prefer & (3 << (2 * 0))) >> (2 * 0) ))
+prefer_wood=$(( ($prefer & (3 << (2 * 1))) >> (2 * 1) ))
+prefer_water=$(( ($prefer & (3 << (2 * 2))) >> (2 * 2) ))
+prefer_fire=$(( ($prefer & (3 << (2 * 3))) >> (2 * 3) ))
+prefer_sioo=$(( ($prefer & (3 << (2 * 4))) >> (2 * 4) ))
+
 charm=$(( 16#${talents:42:2} ))
 
 strength_add=$(( 16#${talents:32:2} ))
@@ -52,6 +57,10 @@ p "STR" "$(($strength+strength_add))($strength_add)" "AGI" "$(($agility+$agility
 p "DEX" "$(($finesse+finesse_add))($finesse_add)" "HP" "$(($hp+$hp_add))($hp_add)"
 p "INT" "$(($intellect+intellect_add))($intellect_add)" "LUK" "$(($lucky+$lucky_add))($lucky_add)"
 p "POT" "$(($potential+potential_add))($potential_add)" "CHA" "$(($charm+$charm_add))($charm_add)"
+
+echo "####### Prefer ##########"
+p2 "GOLD" "WOOD" "HOO" "FIRE" "SIOO" 
+p2 "Lv.$prefer_gold" "Lv.$prefer_wood" "Lv.$prefer_water" "Lv.$prefer_fire" "Lv.$prefer_sioo"
 
 basic=$(bc <<< "$strength * $agility * 1000000000000000000 / ((7 + $potential / 100) * $potential)")
 p "basic" $(seth --to-fix 18 $basic) 
