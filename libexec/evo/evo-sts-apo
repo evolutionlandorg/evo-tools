@@ -46,7 +46,7 @@ lucky_add=$(( 16#${talents:18:2} ))
 potential_add=$(( 16#${talents:16:2} ))
 charm_add=$(( 16#${talents:14:2} ))
 
-echo "########## Talent ##############"
+echo "####### Talent ##########"
 p "LIFE" "$(($life+life_add))($life_add)" "MOOD" "$(($mood+$mood_add))($mood_add)"
 p "STR" "$(($strength+strength_add))($strength_add)" "AGI" "$(($agility+$agility_add))($agility_add)"
 p "DEX" "$(($finesse+finesse_add))($finesse_add)" "HP" "$(($hp+$hp_add))($hp_add)"
