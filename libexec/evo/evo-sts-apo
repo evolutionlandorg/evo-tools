@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+### evo-sts-apo -- Apostle Status Management
+### Usage: evo sts apo
+###
+### Commands: cmn sts apo <id> Apostle object status
+###
+### Example:  evo sts apo
+
+set -e
+
+p() { printf "%-5s %-5s   %-5s %-5s\n" "$1" "$2" $3 $4; }
+p2() { printf "%-11s %-42s %-66s\n" "$1" "$2" "$3"; }
+p3() { printf "%-11s %-22s %-22s %-22s\n" "$1" "$2" "$3" "$4"; }
+
+id=$(seth --to-word ${1?})
+class=$(( 16#${id:16:2} ))
+if test "$class" != 2; then
+  echo "The token id is not apostle."
+  exit 1;
+fi
+info=$(evo apo-bas info "$id")
+genes=$(seth --to-uint256 $(echo $info | cut -d' ' -f 1))
+talents=$(seth --to-uint256 $(echo $info | cut -d' ' -f 2))
+strength=$(( 16#${talents:64:2} ))
+agility=$(( 16#${talents:62:2} ))
+intellect=$(( 16#${talents:60:2} ))
+life=$(( 16#${talents:58:2} ))
+hp=$(( 16#${talents:56:2} ))
+mood=$(( 16#${talents:54:2} ))
+finesse=$(( 16#${talents:52:2} ))
+lucky=$(( 16#${talents:50:2} ))
+potential=$(( 16#${talents:48:2} ))
+
+prefer=$(( 16#${talents:44:4} ))
+
+charm=$(( 16#${talents:42:2} ))
+
+strength_add=$(( 16#${talents:32:2} ))
+agility_add=$(( 16#${talents:30:2} ))
+intellect_add=$(( 16#${talents:28:2} ))
+life_add=$(( 16#${talents:26:2} ))
+hp_add=$(( 16#${talents:24:2} ))
+mood_add=$(( 16#${talents:22:2} ))
+finesse_add=$(( 16#${talents:20:2} ))
+lucky_add=$(( 16#${talents:18:2} ))
+potential_add=$(( 16#${talents:16:2} ))
+charm_add=$(( 16#${talents:14:2} ))
+
+echo "########## Talent ##############"
+p "LIFE" "$(($life+life_add))($life_add)" "MOOD" "$(($mood+$mood_add))($mood_add)"
+p "STR" "$(($strength+strength_add))($strength_add)" "AGI" "$(($agility+$agility_add))($agility_add)"
+p "DEX" "$(($finesse+finesse_add))($finesse_add)" "HP" "$(($hp+$hp_add))($hp_add)"
+p "INT" "$(($intellect+intellect_add))($intellect_add)" "LUK" "$(($lucky+$lucky_add))($lucky_add)"
+p "POT" "$(($potential+potential_add))($potential_add)" "CHA" "$(($charm+$charm_add))($charm_add)"
+
+basic=$(bc <<< "$strength * $agility * 1000000000000000000 / ((7 + $potential / 100) * $potential)")
+p "basic" $(seth --to-fix 18 $basic) 

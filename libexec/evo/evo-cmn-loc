@@ -28,7 +28,7 @@ case $1 in
     x=$(echo $loc | cut -d' ' -f 1)
     y=$(echo $loc | cut -d' ' -f 2)
     p "x" "$x"
-    p "y" "$x"
+    p "y" "$y"
   ;;
   setHM)
     sig="setTokenLocationHM(uint256,int,int)"
@@ -40,7 +40,7 @@ case $1 in
     x=$(echo $loc | cut -d' ' -f 1)
     y=$(echo $loc | cut -d' ' -f 2)
     p "x" "$x"
-    p "y" "$x"
+    p "y" "$y"
   ;;
   set)
     sig="setTokenLocation(uint256,int,int)"

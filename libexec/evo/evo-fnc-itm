@@ -23,12 +23,11 @@ case $1 in
   ;;
   i2i)
     sig="tokenId2Item(uint256)(uint256,uint128,uint16,uint16,uint16,uint16,address,uint256,address,uint256)"
-    seth call "$itm" "$sig" "${@:2}"
     keys=("index" "rate" "objClassExt" "class" "grade" "prefer" "major" "id" "minor" "amount")
-    item=$(seth call "$bas" "$sig" "${2?}")
+    item=$(seth call "$itm" "$sig" "${2?}")
     for i in "${!keys[@]}"; do
       ((idx="$i"+1))
-      value=$(echo "$item" | cut -d' ' -f "$idx") 
+      value=$(echo $item | cut -d' ' -f "$idx") 
       p "${keys[i]}" "$value"
     done
   ;;

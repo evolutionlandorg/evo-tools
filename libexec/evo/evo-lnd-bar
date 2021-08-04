@@ -59,7 +59,7 @@ case $1 in
     p "index" "$index"
   ;;
   item)
-    sig="getLandIdByItem(address,uint256)(address,bytes32)"
+    sig="getBarItem(uint256,uint256)(address,bytes32,address)"
     seth call "$bar" "$sig" "${@:2}"
   ;;
   i2p)

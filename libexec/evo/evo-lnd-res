@@ -107,7 +107,7 @@ case $1 in
     seth --to-fix 18 $(seth call "$res" "$sig" "${@:2}")
   ;;
   miner)
-    sig="getMinerOnLand(uint256,address,uint256)(uint256)"
+    sig="getMinerOnLand(uint256,address,uint256)(bytes32)"
     for i in {0..4}; do
       index=$(seth --to-uint256 $i)
       seth call "$res" "$sig" $2 $3 $index

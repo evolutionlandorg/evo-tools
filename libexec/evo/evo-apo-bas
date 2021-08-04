@@ -41,6 +41,10 @@ case $1 in
       p "${keys[i]}" "$value"
     done
   ;;
+  info)
+    sig="getApostleInfo(uint256)(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256)"
+    seth call "$bas" "$sig" "${2?}"
+  ;;
   tal)
     # apostle_talent.go
     # GenerateTalents.py
