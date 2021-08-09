@@ -100,6 +100,14 @@ evo-init() {
         config-init "${0%/*}/conf/bsctest.json";
         chain-verify "97"
         ;;
+      polygon)
+        config-init "${0%/*}/conf/polygon.json";
+        chain-verify "137"
+        ;;
+      mumbai)
+        config-init "${0%/*}/conf/mumbai.json";
+        chain-verify "80001"
+        ;;
       *)
         if [[ "$@" != *"help"* ]]; then
           echo "Warning: \`--chain' option not specified. Defaulting to ropsten"

@@ -60,6 +60,7 @@ mood=$(($mood + $mood_add))
 finesse=$(($finesse + $finesse_add))
 lucky=$(($lucky + $lucky_add))
 potential=$(($potential + $potential_add))
+charm=$(($charm + $charm_add))
 
 echo "####### Talent ##########"
 p "LIFE" "$(($life))($life_add)" "MOOD" "$(($mood))($mood_add)"
