@@ -88,7 +88,7 @@ case $1 in
     seth send "$bas" "$sig" "${@:2}"
   ;;
   loc)
-    sig="getTokenIdByLocation(int,int)(uint256)"
+    sig="getTokenIdByLocation(int,int)"
     seth call "$bas" "$sig" "${@:2}"
   ;;
   exs)

@@ -10,9 +10,10 @@
 ###           approveAll       <to>       <bool>                       SetApprovalForAll
 ###           approvedAll      <from>     <to>                         IsApprovedForAll
 ###           safeTransferFrom <from>     <to>       <token-id> <data> SafeTransferFrom
+###           exists           <token-id>                              Exists
 ###
-### Example:  evo cmn-ownership balance @me
-###           evo cmn-ownership owner @land
+### Example:  evo cmn-tkn balance @me
+###           evo cmn-tkn owner @land
 
 set -e
 
@@ -53,7 +54,11 @@ case $1 in
   ;;
   safeTransferFrom)
     sig="safeTransferFrom(address,address,uint256,bytes)"
+    seth send "$ownership" "$sig" "${@:2}"
+  ;;
+  exists)
+    sig="exists(uint256)(bool)"
     seth call "$ownership" "$sig" "${@:2}"
   ;;
-  *) evo help cmn-ownership
+  *) evo help cmn-tkn
 esac

@@ -13,7 +13,7 @@
 
 set -e
 
-gen="${GENESISHOLDER_PROXY?}" 
+gen="$(evo --addr-of "CONTRACT_GENESIS_HOLDER")" 
 
 case $1 in
   op)

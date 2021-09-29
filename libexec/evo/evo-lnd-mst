@@ -31,6 +31,10 @@ case $1 in
     sig="setTotalBoxNotOpened(uint)"
     seth send "$mst" "$sig" "${@:2}" 
   ;;
+  unbox)
+    sig="unbox(uint256)"
+    seth send "$mst" "$sig" "${@:2}"
+  ;;
   *) evo help land-mst 
 esac
 	
