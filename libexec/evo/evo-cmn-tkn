@@ -17,7 +17,7 @@
 
 set -e
 
-ownership="$(evo --addr-of "CONTRACT_OBJECT_OWNERSHIP")" 
+ownership="$(evo --addr-of "CONTRACT_OBJECT_OWNERSHIP")"
 
 case $1 in
   balance)

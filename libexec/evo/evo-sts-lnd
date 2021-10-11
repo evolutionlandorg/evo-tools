@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-### evo-sts-lnd -- Land Object Status 
+### evo-sts-lnd -- Land Object Status
 ### Usage: evo sts lnd
 ###
 ### Commands: cmn sts lnd <id> Land object status
@@ -9,8 +9,10 @@
 set -e
 
 p() { printf "%-11s %-11s\n" "$1" "$2"; }
-p2() { printf "%-5s %-42s %-66s\n" "$1" "$2" "$3"; }
+p2() { printf "%-5s %-42s %-66s %-14s %-20s\n" "$1" "$2" "$3" "$4" "$5"; }
 p3() { printf "%-11s %-22s %-22s %-22s\n" "$1" "$2" "$3" "$4"; }
+p4() { printf "%-42s %-22s %-22s\n" "$1" "$2" "$3"; }
+p5() { printf "%-42s %-1s %-66s %-22s\n" "$1" "$2" "$3" "$4"; }
 
 id=$(seth --to-word ${1?})
 class=$(( 16#${id:16:2} ))
@@ -20,12 +22,12 @@ if test "$class" != 1; then
 fi
 mask=$(evo lnd-bas mask "$id")
 echo "########## Mask ##############"
-p "is_reserved" "$((${mask} & 1))" 
-# p "is_reserved" $(evo lnd-bas rsv "$id") 
-p "is_special" "$((${mask} & 2))" 
-# p "is_special" $(evo lnd-bas spc "$id") 
-p "has_box" "$((${mask} & 4))" 
-# p "has_box" $(evo lnd-bas box "$id") 
+p "is_reserved" "$((${mask} & 1))"
+# p "is_reserved" $(evo lnd-bas rsv "$id")
+p "is_special" "$((${mask} & 2))"
+# p "is_special" $(evo lnd-bas spc "$id")
+p "has_box" "$((${mask} & 4))"
+# p "has_box" $(evo lnd-bas box "$id")
 echo "######## Locatoin ############"
 evo cmn-loc getHM $id
 # evo cmn-loc get $id
@@ -34,23 +36,36 @@ evo lnd-bas rra $id
 # evo lnd-res speed $id
 echo "########## Miner #############"
 declare -A tokens=(
-["Gold"]="$(evo --addr-of "CONTRACT_GOLD_ERC20_TOKEN")" 
-["Wood"]="$(evo --addr-of "CONTRACT_WOOD_ERC20_TOKEN")" 
-["Water"]="$(evo --addr-of "CONTRACT_WATER_ERC20_TOKEN")" 
-["Fire"]="$(evo --addr-of "CONTRACT_FIRE_ERC20_TOKEN")" 
-["Soil"]="$(evo --addr-of "CONTRACT_SOIL_ERC20_TOKEN")" 
+["Gold"]="$(evo --addr-of "CONTRACT_GOLD_ERC20_TOKEN")"
+["Wood"]="$(evo --addr-of "CONTRACT_WOOD_ERC20_TOKEN")"
+["Water"]="$(evo --addr-of "CONTRACT_WATER_ERC20_TOKEN")"
+["Fire"]="$(evo --addr-of "CONTRACT_FIRE_ERC20_TOKEN")"
+["Soil"]="$(evo --addr-of "CONTRACT_SOIL_ERC20_TOKEN")"
 )
 evo lnd-res l2s "$id"
-# for token in "${tokens[@]}"; do
-#   evo lnd-res miner "$id" "$token"
-# done
+echo "------------------------------"
+p5 "Resource Index Miner Strength"
+for token in "${tokens[@]}"; do
+  evo lnd-res miners "$id" "$token"
+done
+echo "------------------------------"
+p4 "Resource TotalStrength Unclaim"
+for token in "${tokens[@]}"; do
+  st=$(evo lnd-res strength "$id" "$token")
+  av=$(seth --to-fix 18 $(evo lnd-res ava "$id" "[$token]"))
+  p4 "$token" "$st" "$av"
+done
 echo "########## Item ##############"
-p2 "Index" "Staker" "ItemId"
+p2 "Index" "Staker" "ItemId" "ProtectPeriod" "Unclaim"
+ownership="$(evo --addr-of "CONTRACT_OBJECT_OWNERSHIP")"
 for i in {0..4};do
-  item="$(evo lnd-bar item $id $i)"  
+  item="$(evo lnd-bar item $id $i)"
   staker=${item:0:42}
   itemId=${item:43:66}
-  p2 "$i" "$staker" "$itemId"
+  resource=${item:110:42}
+  pp=$(evo lnd-bar i2p "$ownership" "$itemId")
+  av=$(seth --to-fix 18 $(evo lnd-bar ava "$ownership" "$itemId" "[$resource]"))
+  p2 "$i" "$staker" "$itemId $pp $av"
 done
 echo "######## Stength #############"
 p3 "Resource" "Land" "Item" "Total"
@@ -58,5 +73,7 @@ for key in ${!tokens[*]};do
   token=${tokens[$key]}
   l="$(evo lnd-res strength $id $token)"
   i="$(evo lnd-bar totalStrength $id $token)"
-  p3 "$key" "$l" "$i" "$(bc <<< "$l + $i")" 
+  p3 "$key" "$l" "$i" "$(bc <<< "$l + $i")"
+  t="$(evo lnd-res totalStrength $id $token)"
+  echo "total $t"
 done

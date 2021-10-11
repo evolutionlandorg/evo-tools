@@ -1,8 +1,8 @@
-#!/usr/bin/env bash 
+#!/usr/bin/env bash
 ### evo-lnd-res -- Land Resource Management
 ### Usage: evo lnd-res [<command>]
 ###
-### Commands: mms                                            MaxMiners 
+### Commands: mms                                            MaxMiners
 ###           setMMS        <uint256>                        SetMaxMiners
 ###           l2s           <land-id>  <res-addr>            Land2ResourceMineState
 ###           m2i           <miner-id>                       Miner2Index
@@ -14,6 +14,7 @@
 ###           strength      <land-id>  <res-addr>            GetLandMiningStrength
 ###           totalStrength <land-id>  <res-addr>            GetTotalMiningStrength
 ###           miner         <land-id>  <res-addr> <index>    GetMinerOnLand
+###           miners        <land-id>  <res-addr>            GetMinersOnLand
 ###           land          <miner-id>                       LandWorkingOn
 ###           claim         <land-id>                        ClaimLandResource
 ###           ava           <land-id>  <res-addr[]>          AvailableLandResources
@@ -24,18 +25,18 @@
 
 set -e
 
-res="$(evo --addr-of "CONTRACT_LAND_RESOURCE")" 
+res="$(evo --addr-of "CONTRACT_LAND_RESOURCE")"
 
 p() { printf "%-25s %-52s \n" "$1" "$2"; }
 
 case $1 in
   mms)
     sig="maxMiners()(int256)"
-    seth call "$res" "$sig" 
+    seth call "$res" "$sig"
   ;;
   setMMS)
     sig="setMaxMiners(uint256)"
-    seth call "$res" "$sig" 
+    seth call "$res" "$sig"
   ;;
   l2s)
     sig="land2ResourceMineState(uint256)(uint256,uint256,uint256,uint256,uint256,uint256)"
@@ -71,11 +72,11 @@ case $1 in
     id=${2?}
     currentTime=$(seth --to-uint256 $(date '+%s'))
     sig="getReleaseSpeed(uint256,address,uint256)(uint256)"
-    gold="$(evo --addr-of "CONTRACT_GOLD_ERC20_TOKEN")" 
-    wood="$(evo --addr-of "CONTRACT_WOOD_ERC20_TOKEN")" 
-    water="$(evo --addr-of "CONTRACT_WATER_ERC20_TOKEN")" 
-    fire="$(evo --addr-of "CONTRACT_FIRE_ERC20_TOKEN")" 
-    soil="$(evo --addr-of "CONTRACT_SOIL_ERC20_TOKEN")" 
+    gold="$(evo --addr-of "CONTRACT_GOLD_ERC20_TOKEN")"
+    wood="$(evo --addr-of "CONTRACT_WOOD_ERC20_TOKEN")"
+    water="$(evo --addr-of "CONTRACT_WATER_ERC20_TOKEN")"
+    fire="$(evo --addr-of "CONTRACT_FIRE_ERC20_TOKEN")"
+    soil="$(evo --addr-of "CONTRACT_SOIL_ERC20_TOKEN")"
     seth call "$res" "$sig" "$id" "$gold" "$currentTime"
     seth call "$res" "$sig" "$id" "$wood" "$currentTime"
     seth call "$res" "$sig" "$id" "$water" "$currentTime"
@@ -108,9 +109,15 @@ case $1 in
   ;;
   miner)
     sig="getMinerOnLand(uint256,address,uint256)(bytes32)"
+    seth call "$res" "$sig" $2 $3 $(seth --to-uint256 $4)
+  ;;
+  miners)
+    sig="getMinerOnLand(uint256,address,uint256)(bytes32)"
     for i in {0..4}; do
       index=$(seth --to-uint256 $i)
-      seth call "$res" "$sig" $2 $3 $index
+      m=$(seth call "$res" "$sig" $2 $3 $index 2> /dev/null) || continue
+      st=$(seth --to-fix 18 $(evo apo-bas strength $m $3 $2))
+      echo "$3 $i $m $st"
     done
   ;;
   land)
@@ -129,7 +136,7 @@ case $1 in
     sig="resourceReleaseStartTime()(uint256)"
     seth call "$res" "$sig" "${@:2}"
   ;;
-  *) evo help land-res 
+  *) evo help land-res
 esac
-	
+
 set -e
