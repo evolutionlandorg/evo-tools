@@ -74,6 +74,4 @@ for key in ${!tokens[*]};do
   l="$(evo lnd-res strength $id $token)"
   i="$(evo lnd-bar totalStrength $id $token)"
   p3 "$key" "$l" "$i" "$(bc <<< "$l + $i")"
-  t="$(evo lnd-res totalStrength $id $token)"
-  echo "total $t"
 done
