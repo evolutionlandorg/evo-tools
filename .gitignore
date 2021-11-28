@@ -1,4 +1,5 @@
 .dapprc
 .sethrc
 .env
+.DS_Store
 

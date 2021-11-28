@@ -1,8 +1,8 @@
 { pkgs ? import <nixpkgs> {}
 , dappPkgs ? import (pkgs.fetchgit {
     url = "https://github.com/hujw77/dapptools";
-    rev = "evo/0.0.2";
-    sha256 = "0vwjhfkc4k5mpwj6p9b6c67sr2mzwajayijdwcqwcjgkg4kc67si";
+    branchName = "master";
+    sha256 = "cVuTbr1oxB/zG+TGwqZYW8fKuAnJ4jfLxbVD/SgeTxI=";
     fetchSubmodules = true;
   }) {}
 }:
