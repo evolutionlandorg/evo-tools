@@ -61,7 +61,7 @@ curl -L https://nixos.org/nix/install | sh
 Then run via the installer:
 
 ```sh
-$ curl https://gist.githubusercontent.com/hujw77/ce3d9ed102de1fa1c9eba7754459333a/raw/2a585cf05cbb123502abc6ce3291da311d4fbab2/install.sh | sh
+$ curl https://gist.githubusercontent.com/hujw77/ce3d9ed102de1fa1c9eba7754459333a/raw/08b13416e9174108e64e2f905bf5ce17d4c5ff48/install.sh | sh
 ```
 
 ## Configuration
