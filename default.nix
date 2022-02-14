@@ -2,7 +2,7 @@
 , dappPkgs ? import (pkgs.fetchgit {
     url = "https://github.com/hujw77/dapptools";
     branchName = "master";
-    sha256 = "At8uzX2+e7lcnidmDni8icv/KG/1lPHIhGEv3AFabPM=";
+    sha256 = "1g8i5licj3fpzw3j8g30nny270bfk0wghajcrvbxh6qkzaifmncg";
     fetchSubmodules = true;
   }) {}
 }:
