@@ -163,5 +163,3 @@ case $1 in
   ;;
   *) evo help land-bas 
 esac
-	
-set -e
