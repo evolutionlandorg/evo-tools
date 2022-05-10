@@ -8,6 +8,7 @@
 ###           auc    <token-id> <start-price> <end-price> <duration> <start-at> <token> CreateGen0Auction
 ###           cancel <token-id>                                                         CancelAuction
 ###           setOp  <operator>                                                         SetOperator
+###           claim  <token-id>                                                         Claim721Token
 ###
 ### Example:  evo apo-gen op
 ###           evo apo-gen cnt 
@@ -41,6 +42,10 @@ case $1 in
   ;;
   setOp)
     sig="setOperator(address)"
+    seth send "$gen" "$sig" "${@:2}"
+  ;;
+  claim)
+    sig="claimERC721Tokens(uint256)"
     seth send "$gen" "$sig" "${@:2}"
   ;;
   *) evo help apo-gen
