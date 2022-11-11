@@ -1,10 +1,8 @@
-{ pkgs ? import <nixpkgs> {}
-, dappPkgs ? import (pkgs.fetchgit {
-    url = "https://github.com/hujw77/dapptools";
-    branchName = "evo/0.0.3";
-    sha256 = "140apalhrp4njcyh2r79393jfzisivi8vjxirgcp0x792kavbkyr";
-    fetchSubmodules = true;
-  }) {}
-}:
-
-dappPkgs.callPackage ./evo-cli.nix {}
+let
+  sources = import ./nix/sources.nix;
+  pkgs = import sources.dapptools {};
+  evo-tools = pkgs.callPackage ./evo-cli.nix {};
+in
+{
+  inherit evo-tools;
+}
